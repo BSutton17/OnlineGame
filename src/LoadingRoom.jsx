@@ -1,4 +1,3 @@
-import react from "react";
 import { useState } from "react";
 import { io } from "socket.io-client";
 import App from "./App";
