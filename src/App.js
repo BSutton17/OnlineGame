@@ -317,7 +317,7 @@ function App({ socket, username, room }) {
    useEffect(() => {
     setGrid(createGrid(20, color))
       // Listening for the 'testEmit' event from the server
-  })
+  }, [color])
 
 
   //send new side to clients
@@ -795,11 +795,11 @@ const handleAbilityDrop = (cell, cellI, cellJ, color, determineBackground) => {
       return prevGrid.map((cell) => {
         const [cellI, cellJ] = cell.props.id.split('-').map(Number);
         let className = ''
-        if((cell.props.children != '' || cell.props.children == barrier )  && (cell.props.className == 'box-green' || cell.props.className == 'box-dark-green' )){
+        if((cell.props.children !== '' || cell.props.children === barrier )  && (cell.props.className === 'box-green' || cell.props.className === 'box-dark-green' )){
           className = beforeChangeRef.current
          
         }
-        else if(cell.props.className == 'box-green' || cell.props.className == 'box-dark-green'){
+        else if(cell.props.className === 'box-green' || cell.props.className === 'box-dark-green'){
           className = determineBackground(cellI, cellJ)
        }
         else{
@@ -919,7 +919,7 @@ const handleAbilityDrop = (cell, cellI, cellJ, color, determineBackground) => {
 
   const removeMoves = (turn) =>{
    // updateTurn()
-    if(turn == '' ){
+    if(turn === '' ){
       return "Moves Left: " + moves
     }
   }
