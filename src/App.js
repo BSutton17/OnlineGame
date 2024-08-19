@@ -4,7 +4,6 @@ import { AiFillFire } from "react-icons/ai";
 import { TbBow, TbSwords, TbCross, TbShovel  } from "react-icons/tb";
 import { PiMagicWandFill,PiHammerFill  } from "react-icons/pi";
 import { GiCrownedSkull } from "react-icons/gi";
-
 function App({ socket, username, room }) {
 
 
@@ -50,7 +49,7 @@ function App({ socket, username, room }) {
    const carpenter = "C";
    const barrier = 'B'
 
-   const updateMoneyState = () => {
+   const updateMoneyState = useCallback(() => {
     setBlueMoney((prevBlueMoney) => {
       setOrangeMoney((prevOrangeMoney) => {
         const updatedBlueMoney = prevBlueMoney; // or apply any logic if you need to
@@ -60,25 +59,44 @@ function App({ socket, username, room }) {
       });
       return prevBlueMoney;
     });
-  };
+  }, []);
 
-   const setNewColor = useCallback(() => {
+  const setNewColor = useCallback(() => {
     if (!side) {
-        setOrangeMoney(prevOrangeMoney => prevOrangeMoney + 100);
-        setColor("selector-blue");
-        setTurn("Blue's Turn");
+      setOrangeMoney(prevOrangeMoney => prevOrangeMoney + 100);
+      setColor("selector-blue");
+      setTurn("Blue's Turn");
     } else {
-        setBlueMoney(prevBlueMoney => prevBlueMoney + 100);
-        setColor("selector-orange");
-        setTurn("Orange's Turn");
+      setBlueMoney(prevBlueMoney => prevBlueMoney + 100);
+      setColor("selector-orange");
+      setTurn("Orange's Turn");
     }
     setTimeout(() => {
-        setTurn("");
+      setTurn("");
     }, 2000);
     setSide((prevSide) => !prevSide);
     updateMoneyState();
-}, [side, updateMoneyState]);
+  }, [side, updateMoneyState]);
 
+  const validateMove = useCallback((e, character, color, moves, side, beforeChangeRef, setTurn) => {
+    if (!canAffordCharacter(character, color)) {
+      e.preventDefault();
+      setTurn("Cannot Afford");
+      setTimeout(() => {
+        setTurn("");
+      }, 1500);
+      return false;
+    } 
+    else if (
+      (beforeChangeRef.current === 'box-blue' && side === false) ||
+      (beforeChangeRef.current === 'box-orange' && side === true)
+    ) {
+      e.preventDefault();
+      return false;
+    }
+  
+    return true;
+  },[])
 
 //handleDragStart 
 const handleDragStart = useCallback((e, character, moves) =>{
@@ -109,15 +127,8 @@ catch{
 },[color, side, validateMove])
 
     //when called it creates a cell with updated information
-    const renderBoxButton = (className, content, id, cellI, cellJ, color) => {
-      if(content !== '' || content !== undefined){
-      }
-  
-      let drag = true;
-      if(content === ''){
-        drag = false
-      }
-     
+    const renderBoxButton = useCallback((className, content, id, cellI, cellJ, color) => {
+      let drag = content !== '' && content !== undefined;
       return (
         <button
           className={className}
@@ -132,8 +143,44 @@ catch{
           {content}
         </button>
       );
-      
-    };
+    }, [handleDragStart]);
+
+      // Reset colors of all cells to their original state based on their position
+  const resetColors = () => {
+    setGrid((prevGrid) => {
+     
+      return prevGrid.map((cell) => {
+        const [cellI, cellJ] = cell.props.id.split('-').map(Number);
+        let className = ''
+        if((cell.props.children !== '' || cell.props.children === barrier )  && (cell.props.className === 'box-green' || cell.props.className === 'box-dark-green' )){
+          className = beforeChangeRef.current
+         
+        }
+        else if(cell.props.className === 'box-green' || cell.props.className === 'box-dark-green'){
+          className = determineBackground(cellI, cellJ)
+       }
+        else{
+           className = cell.props.className
+        }
+
+        return (
+          <button
+            className={className}
+            draggable={cell.props.draggable}
+            id={cell.props.id}
+            onMouseDown={() => handleMouseDown(cellI, cellJ, cell.props.children, className)}
+            onMouseUp={handleMouseUp}
+            onDragStart={cell.props.onDragStart}
+            onDragOver={(e) => handleDragOver(e)}
+            onDrop={(e) => handleDrop(e, cell.props.id, color)}
+          >
+            {cell.props.children}
+          </button>
+        );
+      });
+    });
+    sendGridUpdate()
+  };
 
 // Updated handleDrop function to prevent dropping if the player can't afford the character
 const handleDrop = useCallback((e, id, color, moves) => {
@@ -744,26 +791,6 @@ function canAffordCharacter(character, color) {
          (color === 'selector-orange' && orangeMoney >= cost);
 }
 
-function validateMove(e, character, color, moves, side, beforeChangeRef, setTurn) {
-  if (!canAffordCharacter(character, color)) {
-    e.preventDefault();
-    setTurn("Cannot Afford");
-    setTimeout(() => {
-      setTurn("");
-    }, 1500);
-    return false;
-  } 
-  else if (
-    (beforeChangeRef.current === 'box-blue' && side === false) ||
-    (beforeChangeRef.current === 'box-orange' && side === true)
-  ) {
-    e.preventDefault();
-    return false;
-  }
-
-  return true;
-}
-
 // for priest ability
 const handleAbilityDrop = (cell, cellI, cellJ, color, determineBackground) => {
   let className = determineBackground(cellI, cellJ);
@@ -783,44 +810,6 @@ const handleAbilityDrop = (cell, cellI, cellJ, color, determineBackground) => {
      
   }
 };
-
-  // Reset colors of all cells to their original state based on their position
-  const resetColors = () => {
-    setGrid((prevGrid) => {
-     
-      return prevGrid.map((cell) => {
-        const [cellI, cellJ] = cell.props.id.split('-').map(Number);
-        let className = ''
-        if((cell.props.children !== '' || cell.props.children === barrier )  && (cell.props.className === 'box-green' || cell.props.className === 'box-dark-green' )){
-          className = beforeChangeRef.current
-         
-        }
-        else if(cell.props.className === 'box-green' || cell.props.className === 'box-dark-green'){
-          className = determineBackground(cellI, cellJ)
-       }
-        else{
-           className = cell.props.className
-        }
-
-        return (
-          <button
-            className={className}
-            draggable={cell.props.draggable}
-            id={cell.props.id}
-            onMouseDown={() => handleMouseDown(cellI, cellJ, cell.props.children, className)}
-            onMouseUp={handleMouseUp}
-            onDragStart={cell.props.onDragStart}
-            onDragOver={(e) => handleDragOver(e)}
-            onDrop={(e) => handleDrop(e, cell.props.id, color)}
-          >
-            {cell.props.children}
-          </button>
-        );
-      });
-    });
-    sendGridUpdate()
-  };
-
 
   const handleReset = () => {
     setBlueMoney(550)
