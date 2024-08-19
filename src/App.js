@@ -96,7 +96,7 @@ function App({ socket, username, room }) {
     }
   
     return true;
-  },[])
+  },[canAffordCharacter])
 
 //handleDragStart 
 const handleDragStart = useCallback((e, character, moves) =>{
