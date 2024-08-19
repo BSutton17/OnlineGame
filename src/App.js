@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import io from 'socket.io-client';
 import './App.css';
 import { AiFillFire } from "react-icons/ai";
 import { TbBow, TbSwords, TbCross, TbShovel  } from "react-icons/tb";
@@ -50,7 +49,6 @@ function App({ socket, username, room }) {
    const necromancer = "N";
    const carpenter = "C";
    const barrier = 'B'
-   const fire = "F"
 
    const setNewColor = () => {
     if (!side) {
