@@ -52,26 +52,28 @@ function App({ socket, username, room }) {
 
    const setNewColor = useCallback(() => {
     if (!side) {
-      setOrangeMoney(prevOrangeMoney => prevOrangeMoney +100);
-       setColor("selector-blue");
-       setTurn("Blue's Turn");
+        setOrangeMoney(prevOrangeMoney => prevOrangeMoney + 100);
+        setColor("selector-blue");
+        setTurn("Blue's Turn");
     } else {
-      setBlueMoney(prevBlueMoney => prevBlueMoney +100);
-       setColor("selector-orange");
-       setTurn("Orange's Turn");
+        setBlueMoney(prevBlueMoney => prevBlueMoney + 100);
+        setColor("selector-orange");
+        setTurn("Orange's Turn");
     }
     setTimeout(() => {
-       setTurn("");
+        setTurn("");
     }, 2000);
     setSide((prevSide) => !prevSide);
-    updateMoneyState()
-  }, [])
+    updateMoneyState();
+}, [side, updateMoneyState]);
+
 
      // Handle the mouse up event to reset the colors back to their original state
      const handleMouseUp = useCallback(() => {
-    resetColors()
-    dragPositionRef.current = null;
-  }, [])
+      resetColors();
+      dragPositionRef.current = null;
+  }, [resetColors]);
+  
   
   const handleMouseDown = useCallback((i, j, character, side) => {
     if (!character || !character.props) {
@@ -283,7 +285,7 @@ function App({ socket, username, room }) {
         return cell;
       });
     });
-  }, []);
+  }, [color, handleMouseUp, renderBoxButton]);
 
     // Function to create the initial grid
     const createGrid = useCallback((num, color) => {
@@ -312,7 +314,7 @@ function App({ socket, username, room }) {
       }
     }
     return array;
-    }, [])
+    }, [handleDragStart, handleDrop, handleMouseDown, handleMouseUp, moves]);
 
   useEffect(() => {
     setGrid(createGrid(20, color));
@@ -664,7 +666,7 @@ catch{
   e.dataTransfer.effectAllowed = 'move';
 }
  
-},[])
+},[color, side, validateMove])
 
 // Updated handleDrop function to prevent dropping if the player can't afford the character
 const handleDrop = useCallback((e, id, color, moves) => {
