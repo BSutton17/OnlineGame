@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './App.css';
 import { AiFillFire } from "react-icons/ai";
 import { TbBow, TbSwords, TbCross, TbShovel  } from "react-icons/tb";
@@ -50,7 +50,7 @@ function App({ socket, username, room }) {
    const carpenter = "C";
    const barrier = 'B'
 
-   const setNewColor = () => {
+   const setNewColor = useCallback(() => {
     if (!side) {
       setOrangeMoney(prevOrangeMoney => prevOrangeMoney +100);
        setColor("selector-blue");
@@ -65,15 +65,15 @@ function App({ socket, username, room }) {
     }, 2000);
     setSide((prevSide) => !prevSide);
     updateMoneyState()
- };
+  }, [])
 
      // Handle the mouse up event to reset the colors back to their original state
-  const handleMouseUp = () => {
+     const handleMouseUp = useCallback(() => {
     resetColors()
     dragPositionRef.current = null;
-  }
+  }, [])
   
-  const handleMouseDown = (i, j, character, side) => {
+  const handleMouseDown = useCallback((i, j, character, side) => {
     if (!character || !character.props) {
       return;
     }
@@ -283,10 +283,10 @@ function App({ socket, username, room }) {
         return cell;
       });
     });
-  };
+  }, []);
 
     // Function to create the initial grid
-  const createGrid = (num, color) => {
+    const createGrid = useCallback((num, color) => {
     let array = [];
     for (let i = 0; i <9 ; i++) {
       for (let j = 0; j < num; j++) {
@@ -312,13 +312,11 @@ function App({ socket, username, room }) {
       }
     }
     return array;
-  };
+    }, [])
 
-   useEffect(() => {
-    setGrid(createGrid(20, color))
-      // Listening for the 'testEmit' event from the server
-  }, [color])
-
+  useEffect(() => {
+    setGrid(createGrid(20, color));
+  }, [color, createGrid]);
 
   //send new side to clients
   useEffect(()=>{
@@ -332,8 +330,7 @@ function App({ socket, username, room }) {
     return () => {
       socket.off('receiveUpdated');
     };
-  },[side, color, turn, socket])
-
+  },[side, color, turn, socket,setNewColor])
 
   //useEffect for broadcasting the resetting of a class
   useEffect(()=>{
@@ -360,7 +357,6 @@ function App({ socket, username, room }) {
       socket.off('receiveMovesUpdated');
     };
   },[grid, turn, socket])
-
 
   //update the grid for clients
   useEffect(() => {
@@ -396,7 +392,7 @@ function App({ socket, username, room }) {
     return () => {
       socket.off('receiveGridUpdated');
     };
-  }, [grid, turn,  color, moves, socket]);
+  }, [grid, turn,  color, moves, handleDragStart, handleDrop, handleMouseDown, handleMouseUp, socket]);
 
 
    // UseEffect For broadcasting colors
@@ -418,7 +414,6 @@ function App({ socket, username, room }) {
     socket.emit("sendUpdate", !side, room);
 };
 
-
 const updateMoneyState = () => {
   setBlueMoney((prevBlueMoney) => {
     setOrangeMoney((prevOrangeMoney) => {
@@ -430,7 +425,6 @@ const updateMoneyState = () => {
     return prevBlueMoney;
   });
 };
-
 
 const updateMoves = () =>{
   setMoves((prevMoves)=>{
@@ -489,7 +483,7 @@ const sendGridUpdate = () => {
         );
       });
     });
-  }, [side, color, moves]);
+  }, [side, color, moves, handleDragStart, handleDrop, handleMouseDown, handleMouseUp]);
 
   // Allow drop event
   const handleDragOver = (e) => {
@@ -645,7 +639,7 @@ function validateMove(e, character, color, moves, side, beforeChangeRef, setTurn
 }
 
 //handleDragStart 
-function handleDragStart(e, character, moves) {
+const handleDragStart = useCallback((e, character, moves) =>{
   // if (outOfMoves(moves)) {
   //   e.preventDefault();
   //   setTurn("Out of Moves");
@@ -670,10 +664,10 @@ catch{
   e.dataTransfer.effectAllowed = 'move';
 }
  
-}
+},[])
 
 // Updated handleDrop function to prevent dropping if the player can't afford the character
-function handleDrop(e, id, color, moves) {
+const handleDrop = useCallback((e, id, color, moves) => {
   const droppedContent = e.dataTransfer.getData('text/plain');
 
   if (droppedContent !== 'Arrow' && droppedContent !== 'fireBall' && droppedContent !== 'Ability') {
@@ -766,7 +760,7 @@ function handleDrop(e, id, color, moves) {
   sendGridUpdate()
   resetColors();
   }
-}
+}, [])
 
 // for priest ability
 const handleAbilityDrop = (cell, cellI, cellJ, color, determineBackground) => {
@@ -844,9 +838,6 @@ const handleAbilityDrop = (cell, cellI, cellJ, color, determineBackground) => {
  
     // Check if the className is 'box-black'
     if (className === 'box-black') {
-      // Determine if the current cell is above the target
-      const targetId = id.split('-').map(Number);
-      const isAboveTarget = (cellI === targetId[0] - 1 && cellJ === targetId[1]);
  
       // Return the rendered box button with class 'box-black' and content 'B'
       return renderBoxButton('box-black', 'B', `${cellI}-${cellJ}`, cellI, cellJ, color, false);
