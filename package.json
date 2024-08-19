@@ -38,6 +38,7 @@
     ]
   },
   "devDependencies": {
-    "ajv": "^7.2.4"
+    "ajv": "^7.2.4",
+    @babel/plugin-proposal-private-property-in-object
   }
 }
