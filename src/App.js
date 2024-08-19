@@ -72,6 +72,7 @@ function App({ socket, username, room }) {
     resetColors()
     dragPositionRef.current = null;
   }
+  
   const handleMouseDown = (i, j, character, side) => {
     if (!character || !character.props) {
       return;
@@ -395,7 +396,7 @@ function App({ socket, username, room }) {
     return () => {
       socket.off('receiveGridUpdated');
     };
-  }, [grid, turn,  color, handleDragStart, handleDrop, handleMouseDown, handleMouseUp, moves, socket]);
+  }, [grid, turn,  color, moves, socket]);
 
 
    // UseEffect For broadcasting colors
@@ -488,7 +489,7 @@ const sendGridUpdate = () => {
         );
       });
     });
-  }, [side, color, handleDrop, handleMouseDown, handleMouseUp, moves]);
+  }, [side, color, moves]);
 
   // Allow drop event
   const handleDragOver = (e) => {
