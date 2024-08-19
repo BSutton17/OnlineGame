@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import io from 'socket.io-client';
 import './App.css';
 import { AiFillFire } from "react-icons/ai";
 import { TbBow, TbSwords, TbCross, TbShovel  } from "react-icons/tb";
@@ -49,12 +50,291 @@ function App({ socket, username, room }) {
    const necromancer = "N";
    const carpenter = "C";
    const barrier = 'B'
+   const fire = "F"
 
+   const setNewColor = () => {
+    if (!side) {
+      setOrangeMoney(prevOrangeMoney => prevOrangeMoney +100);
+       setColor("selector-blue");
+       setTurn("Blue's Turn");
+    } else {
+      setBlueMoney(prevBlueMoney => prevBlueMoney +100);
+       setColor("selector-orange");
+       setTurn("Orange's Turn");
+    }
+    setTimeout(() => {
+       setTurn("");
+    }, 2000);
+    setSide((prevSide) => !prevSide);
+    updateMoneyState()
+ };
+
+     // Handle the mouse up event to reset the colors back to their original state
+  const handleMouseUp = () => {
+    resetColors()
+    dragPositionRef.current = null;
+  }
+  const handleMouseDown = (i, j, character, side) => {
+    if (!character || !character.props) {
+      return;
+    }
+  
+    dragPositionRef.current = i + "-" + j;
+    let id = `${i}-${j}`;
+  
+    // Update grid and character positions
+    setGrid((prevGrid) => {
+      return prevGrid.map((cell) => {
+        const [cellI, cellJ] = cell.props.id.split('-').map(Number);
+        let condition = false;
+        let condition2 = false;
+  
+        if (side === 'box-blue') {
+          switch (character.props.name) {
+            case minuteMen:
+              condition = (cellI === i && cellJ === j + 1);
+              condition2 = (cellI === i && cellJ === j + 2);
+              break;
+            case 'A':
+              condition = (
+                (cellI === i && cellJ === j) ||
+                (cellI === i && cellJ === j + 1) ||
+                (cellI === i && cellJ === j + 2) ||
+                (cellI === i + 1 && cellJ === j + 2) ||
+                (cellI === i - 1 && cellJ === j + 2)
+              );
+              condition2 = (
+                (cellI === i + 2 && cellJ === j + 2) ||
+                (cellI === i - 2 && cellJ === j + 2)
+              );
+              break;
+            case priest:
+              condition = (
+                (cellI === i && cellJ === j) ||
+                (cellI === i && cellJ === j + 1) ||
+                (cellI === i + 1 && cellJ === j + 1) ||
+                (cellI === i + 2 && cellJ === j + 1) ||
+                (cellI === i - 1 && cellJ === j + 1) ||
+                (cellI === i - 2 && cellJ === j + 1)
+              );
+              condition2 = (
+                (cellI === i + 2 && cellJ === j + 2) ||
+                (cellI === i - 2 && cellJ === j + 2)
+              );
+              break;
+            case miner:
+              condition = (cellI === i && cellJ === j + 1);
+              condition2 = (
+                (cellI === i && cellJ === j + 2) ||
+                (cellI === i && cellJ === j + 3)
+              );
+              break;
+            case wizard:
+              condition = (
+                (cellI === i && cellJ === j) ||
+                (cellI === i + 1 && cellJ === j) ||
+                (cellI === i - 1 && cellJ === j) ||
+                (cellI === i + 1 && cellJ === j + 1) ||
+                (cellI === i - 1 && cellJ === j + 1)
+              );
+              condition2 = (
+                (cellI === i + 1 && cellJ === j + 2) ||
+                (cellI === i - 1 && cellJ === j + 2)
+              );
+              break;
+            case necromancer:
+              condition = (
+                (cellI === i && cellJ === j) ||
+                (cellI === i && cellJ === j + 1) ||
+                (cellI === i + 1 && cellJ === j + 1) ||
+                (cellI === i - 1 && cellJ === j + 1)
+              );
+              condition2 = (
+                (cellI === i - 1 && cellJ === j + 2) ||
+                (cellI === i + 1 && cellJ === j + 2)
+              );
+              break;
+            case carpenter:
+              condition = (
+                (cellI === i && cellJ === j + 1) ||
+                (cellI === i - 1 && cellJ === j) ||
+                (cellI === i && cellJ === j - 1) ||
+                (cellI === i + 1 && cellJ === j) ||
+                (cellI === i + 2 && cellJ === j) ||
+                (cellI === i - 2 && cellJ === j)
+              );
+              break;
+            default:
+              condition = (cellI === i && cellJ === j);
+              break;
+          }
+        } else {
+          switch (character.props.name) {
+            case minuteMen:
+              condition = (cellI === i && cellJ === j - 1);
+              condition2 = (cellI === i && cellJ === j - 2);
+              break;
+            case archer:
+              condition = (
+                (cellI === i && cellJ === j) ||
+                (cellI === i && cellJ === j - 1) ||
+                (cellI === i && cellJ === j - 2) ||
+                (cellI === i - 1 && cellJ === j - 2) ||
+                (cellI === i + 1 && cellJ === j - 2)
+              );
+              condition2 = (
+                (cellI === i - 2 && cellJ === j - 2) ||
+                (cellI === i + 2 && cellJ === j - 2)
+              );
+              break;
+            case priest:
+              condition = (
+                (cellI === i && cellJ === j) ||
+                (cellI === i && cellJ === j - 1) ||
+                (cellI === i - 1 && cellJ === j - 1) ||
+                (cellI === i - 2 && cellJ === j - 1) ||
+                (cellI === i + 1 && cellJ === j - 1) ||
+                (cellI === i + 2 && cellJ === j - 1)
+              );
+              condition2 = (
+                (cellI === i - 2 && cellJ === j - 2) ||
+                (cellI === i + 2 && cellJ === j - 2)
+              );
+              break;
+            case miner:
+              condition = (cellI === i && cellJ === j - 1);
+              condition2 = (
+                (cellI === i && cellJ === j - 2) ||
+                (cellI === i && cellJ === j - 3)
+              );
+              break;
+            case wizard:
+              condition = (
+                (cellI === i && cellJ === j) ||
+                (cellI === i - 1 && cellJ === j) ||
+                (cellI === i + 1 && cellJ === j) ||
+                (cellI === i - 1 && cellJ === j - 1) ||
+                (cellI === i + 1 && cellJ === j - 1)
+              );
+              condition2 = (
+                (cellI === i - 1 && cellJ === j - 2) ||
+                (cellI === i + 1 && cellJ === j - 2)
+              );
+              break;
+            case necromancer:
+              condition = (
+                (cellI === i && cellJ === j) ||
+                (cellI === i && cellJ === j - 1) ||
+                (cellI === i - 1 && cellJ === j - 1) ||
+                (cellI === i + 1 && cellJ === j - 1)
+              );
+              condition2 = (
+                (cellI === i + 1 && cellJ === j - 2) ||
+                (cellI === i - 1 && cellJ === j - 2)
+              );
+              break;
+            case carpenter:
+              condition = (
+                (cellI === i && cellJ === j - 1) ||
+                (cellI === i + 1 && cellJ === j) ||
+                (cellI === i && cellJ === j + 1) ||
+                (cellI === i - 1 && cellJ === j) ||
+                (cellI === i - 2 && cellJ === j) ||
+                (cellI === i + 2 && cellJ === j)
+              );
+              break;
+            default:
+              break;
+          }
+        }
+  
+        // If it is a condition cell, and it is empty, make it green
+        if (condition && cell.props.children === '' && cell.props.className !== 'box-black' && cell.props.children !== character) {
+          return renderBoxButton("box-green", cell.props.children, cell.props.id, cellI, cellJ, color);
+        }
+        // If it is the character cell, make it green but remember its old color
+        else if (condition && cell.props.children === character) {
+          beforeChangeRef.current = cell.props.className;
+          return (
+            <button
+              key={cell.props.id}
+              className="box-green"
+              draggable={cell.props.draggable}
+              id={cell.props.id}
+              onMouseDown={() => handleMouseDown(cellI, cellJ, character.props.name, color)}
+              onMouseUp={handleMouseUp}
+              onDragStart={cell.props.onDragStart}
+              onDragOver={(e) => handleDragOver(e)}
+              onDrop={cell.props.onDrop}
+            >
+              {character}
+            </button>
+          );
+        }
+        // Handle conditions to update grid cell based on character movement
+        else if (condition && cell.props.id === id) {
+          beforeChangeRef.current = cell.props.className;
+          return renderBoxButton("box-green", cell.props.children, cell.props.id, cellI, cellJ, color);
+        }
+        // Same but for dark green
+        else if (condition2 && cell.props.children === '') {
+          return renderBoxButton("box-dark-green", cell.props.children, cell.props.id, cellI, cellJ, color);
+        }
+        // If it wasn't a target cell keep it the same
+        return cell;
+      });
+    });
+  };
+
+    // Function to create the initial grid
+  const createGrid = (num, color) => {
+    let array = [];
+    for (let i = 0; i <9 ; i++) {
+      for (let j = 0; j < num; j++) {
+        let content = '';
+        let className = determineBackground(i, j);
+
+
+        array.push(
+          <button
+            className={className}
+            draggable={!!content}
+            id={`${i}-${j}`}
+            onMouseDown={() => handleMouseDown(i, j, content, className)}
+            onMouseUp={handleMouseUp}
+            onDragStart={(e) => handleDragStart(e, content, moves)}
+            onDragOver={(e) => handleDragOver(e, className)}
+            onDrop={(e) => handleDrop(e, `${i}-${j}`, color, moves)}
+            key={`${i}-${j}`}
+          >
+            {content}
+          </button>
+        );
+      }
+    }
+    return array;
+  };
 
    useEffect(() => {
     setGrid(createGrid(20, color))
       // Listening for the 'testEmit' event from the server
-  }, [createGrid, color])
+  })
+
+
+  //send new side to clients
+  useEffect(()=>{
+    socket.on('receiveUpdated', (newSide) => {
+      setSide(!newSide)
+      setNewColor()
+    });
+
+
+    // Cleanup on component unmount
+    return () => {
+      socket.off('receiveUpdated');
+    };
+  },[side, color, turn, setNewColor, socket])
+
 
   //useEffect for broadcasting the resetting of a class
   useEffect(()=>{
@@ -212,66 +492,6 @@ const sendGridUpdate = () => {
     });
   }, [side, color, handleDrop, handleMouseDown, handleMouseUp, moves]);
 
-    //send new side to clients
-    useEffect(()=>{
-      socket.on('receiveUpdated', (newSide) => {
-        setSide(!newSide)
-        setNewColor()
-      });
-  
-  
-      // Cleanup on component unmount
-      return () => {
-        socket.off('receiveUpdated');
-      };
-    },[side, color, turn, setNewColor, socket])
-
-  const setNewColor = () => {
-    if (!side) {
-      setOrangeMoney(prevOrangeMoney => prevOrangeMoney +100);
-       setColor("selector-blue");
-       setTurn("Blue's Turn");
-    } else {
-      setBlueMoney(prevBlueMoney => prevBlueMoney +100);
-       setColor("selector-orange");
-       setTurn("Orange's Turn");
-    }
-    setTimeout(() => {
-       setTurn("");
-    }, 2000);
-    setSide((prevSide) => !prevSide);
-    updateMoneyState()
- };
-
-  // Function to create the initial grid
-  const createGrid = (num, color) => {
-    let array = [];
-    for (let i = 0; i <9 ; i++) {
-      for (let j = 0; j < num; j++) {
-        let content = '';
-        let className = determineBackground(i, j);
-
-
-        array.push(
-          <button
-            className={className}
-            draggable={!!content}
-            id={`${i}-${j}`}
-            onMouseDown={() => handleMouseDown(i, j, content, className)}
-            onMouseUp={handleMouseUp}
-            onDragStart={(e) => handleDragStart(e, content, moves)}
-            onDragOver={(e) => handleDragOver(e, className)}
-            onDrop={(e) => handleDrop(e, `${i}-${j}`, color, moves)}
-            key={`${i}-${j}`}
-          >
-            {content}
-          </button>
-        );
-      }
-    }
-    return array;
-  };
- 
   // Allow drop event
   const handleDragOver = (e) => {
     e.preventDefault()
@@ -568,223 +788,7 @@ const handleAbilityDrop = (cell, cellI, cellJ, color, determineBackground) => {
      
   }
 };
- 
-const handleMouseDown = (i, j, character, side) => {
-  if (!character || !character.props) {
-    return;
-  }
 
-  dragPositionRef.current = i + "-" + j;
-  let id = `${i}-${j}`;
-
-  // Update grid and character positions
-  setGrid((prevGrid) => {
-    return prevGrid.map((cell) => {
-      const [cellI, cellJ] = cell.props.id.split('-').map(Number);
-      let condition = false;
-      let condition2 = false;
-
-      if (side === 'box-blue') {
-        switch (character.props.name) {
-          case minuteMen:
-            condition = (cellI === i && cellJ === j + 1);
-            condition2 = (cellI === i && cellJ === j + 2);
-            break;
-          case 'A':
-            condition = (
-              (cellI === i && cellJ === j) ||
-              (cellI === i && cellJ === j + 1) ||
-              (cellI === i && cellJ === j + 2) ||
-              (cellI === i + 1 && cellJ === j + 2) ||
-              (cellI === i - 1 && cellJ === j + 2)
-            );
-            condition2 = (
-              (cellI === i + 2 && cellJ === j + 2) ||
-              (cellI === i - 2 && cellJ === j + 2)
-            );
-            break;
-          case priest:
-            condition = (
-              (cellI === i && cellJ === j) ||
-              (cellI === i && cellJ === j + 1) ||
-              (cellI === i + 1 && cellJ === j + 1) ||
-              (cellI === i + 2 && cellJ === j + 1) ||
-              (cellI === i - 1 && cellJ === j + 1) ||
-              (cellI === i - 2 && cellJ === j + 1)
-            );
-            condition2 = (
-              (cellI === i + 2 && cellJ === j + 2) ||
-              (cellI === i - 2 && cellJ === j + 2)
-            );
-            break;
-          case miner:
-            condition = (cellI === i && cellJ === j + 1);
-            condition2 = (
-              (cellI === i && cellJ === j + 2) ||
-              (cellI === i && cellJ === j + 3)
-            );
-            break;
-          case wizard:
-            condition = (
-              (cellI === i && cellJ === j) ||
-              (cellI === i + 1 && cellJ === j) ||
-              (cellI === i - 1 && cellJ === j) ||
-              (cellI === i + 1 && cellJ === j + 1) ||
-              (cellI === i - 1 && cellJ === j + 1)
-            );
-            condition2 = (
-              (cellI === i + 1 && cellJ === j + 2) ||
-              (cellI === i - 1 && cellJ === j + 2)
-            );
-            break;
-          case necromancer:
-            condition = (
-              (cellI === i && cellJ === j) ||
-              (cellI === i && cellJ === j + 1) ||
-              (cellI === i + 1 && cellJ === j + 1) ||
-              (cellI === i - 1 && cellJ === j + 1)
-            );
-            condition2 = (
-              (cellI === i - 1 && cellJ === j + 2) ||
-              (cellI === i + 1 && cellJ === j + 2)
-            );
-            break;
-          case carpenter:
-            condition = (
-              (cellI === i && cellJ === j + 1) ||
-              (cellI === i - 1 && cellJ === j) ||
-              (cellI === i && cellJ === j - 1) ||
-              (cellI === i + 1 && cellJ === j) ||
-              (cellI === i + 2 && cellJ === j) ||
-              (cellI === i - 2 && cellJ === j)
-            );
-            break;
-          default:
-            condition = (cellI === i && cellJ === j);
-            break;
-        }
-      } else {
-        switch (character.props.name) {
-          case minuteMen:
-            condition = (cellI === i && cellJ === j - 1);
-            condition2 = (cellI === i && cellJ === j - 2);
-            break;
-          case archer:
-            condition = (
-              (cellI === i && cellJ === j) ||
-              (cellI === i && cellJ === j - 1) ||
-              (cellI === i && cellJ === j - 2) ||
-              (cellI === i - 1 && cellJ === j - 2) ||
-              (cellI === i + 1 && cellJ === j - 2)
-            );
-            condition2 = (
-              (cellI === i - 2 && cellJ === j - 2) ||
-              (cellI === i + 2 && cellJ === j - 2)
-            );
-            break;
-          case priest:
-            condition = (
-              (cellI === i && cellJ === j) ||
-              (cellI === i && cellJ === j - 1) ||
-              (cellI === i - 1 && cellJ === j - 1) ||
-              (cellI === i - 2 && cellJ === j - 1) ||
-              (cellI === i + 1 && cellJ === j - 1) ||
-              (cellI === i + 2 && cellJ === j - 1)
-            );
-            condition2 = (
-              (cellI === i - 2 && cellJ === j - 2) ||
-              (cellI === i + 2 && cellJ === j - 2)
-            );
-            break;
-          case miner:
-            condition = (cellI === i && cellJ === j - 1);
-            condition2 = (
-              (cellI === i && cellJ === j - 2) ||
-              (cellI === i && cellJ === j - 3)
-            );
-            break;
-          case wizard:
-            condition = (
-              (cellI === i && cellJ === j) ||
-              (cellI === i - 1 && cellJ === j) ||
-              (cellI === i + 1 && cellJ === j) ||
-              (cellI === i - 1 && cellJ === j - 1) ||
-              (cellI === i + 1 && cellJ === j - 1)
-            );
-            condition2 = (
-              (cellI === i - 1 && cellJ === j - 2) ||
-              (cellI === i + 1 && cellJ === j - 2)
-            );
-            break;
-          case necromancer:
-            condition = (
-              (cellI === i && cellJ === j) ||
-              (cellI === i && cellJ === j - 1) ||
-              (cellI === i - 1 && cellJ === j - 1) ||
-              (cellI === i + 1 && cellJ === j - 1)
-            );
-            condition2 = (
-              (cellI === i + 1 && cellJ === j - 2) ||
-              (cellI === i - 1 && cellJ === j - 2)
-            );
-            break;
-          case carpenter:
-            condition = (
-              (cellI === i && cellJ === j - 1) ||
-              (cellI === i + 1 && cellJ === j) ||
-              (cellI === i && cellJ === j + 1) ||
-              (cellI === i - 1 && cellJ === j) ||
-              (cellI === i - 2 && cellJ === j) ||
-              (cellI === i + 2 && cellJ === j)
-            );
-            break;
-          default:
-            break;
-        }
-      }
-
-      // If it is a condition cell, and it is empty, make it green
-      if (condition && cell.props.children === '' && cell.props.className !== 'box-black' && cell.props.children !== character) {
-        return renderBoxButton("box-green", cell.props.children, cell.props.id, cellI, cellJ, color);
-      }
-      // If it is the character cell, make it green but remember its old color
-      else if (condition && cell.props.children === character) {
-        beforeChangeRef.current = cell.props.className;
-        return (
-          <button
-            key={cell.props.id}
-            className="box-green"
-            draggable={cell.props.draggable}
-            id={cell.props.id}
-            onMouseDown={() => handleMouseDown(cellI, cellJ, character.props.name, color)}
-            onMouseUp={handleMouseUp}
-            onDragStart={cell.props.onDragStart}
-            onDragOver={(e) => handleDragOver(e)}
-            onDrop={cell.props.onDrop}
-          >
-            {character}
-          </button>
-        );
-      }
-      // Handle conditions to update grid cell based on character movement
-      else if (condition && cell.props.id === id) {
-        beforeChangeRef.current = cell.props.className;
-        return renderBoxButton("box-green", cell.props.children, cell.props.id, cellI, cellJ, color);
-      }
-      // Same but for dark green
-      else if (condition2 && cell.props.children === '') {
-        return renderBoxButton("box-dark-green", cell.props.children, cell.props.id, cellI, cellJ, color);
-      }
-      // If it wasn't a target cell keep it the same
-      return cell;
-    });
-  });
-};
-  // Handle the mouse up event to reset the colors back to their original state
-  const handleMouseUp = () => {
-    resetColors()
-    dragPositionRef.current = null;
-  }
   // Reset colors of all cells to their original state based on their position
   const resetColors = () => {
     setGrid((prevGrid) => {
@@ -792,11 +796,11 @@ const handleMouseDown = (i, j, character, side) => {
       return prevGrid.map((cell) => {
         const [cellI, cellJ] = cell.props.id.split('-').map(Number);
         let className = ''
-        if((cell.props.children !== '' || cell.props.children === barrier )  && (cell.props.className === 'box-green' || cell.props.className === 'box-dark-green' )){
+        if((cell.props.children != '' || cell.props.children == barrier )  && (cell.props.className == 'box-green' || cell.props.className == 'box-dark-green' )){
           className = beforeChangeRef.current
          
         }
-        else if(cell.props.className === 'box-green' || cell.props.className === 'box-dark-green'){
+        else if(cell.props.className == 'box-green' || cell.props.className == 'box-dark-green'){
           className = determineBackground(cellI, cellJ)
        }
         else{
@@ -916,7 +920,7 @@ const handleMouseDown = (i, j, character, side) => {
 
   const removeMoves = (turn) =>{
    // updateTurn()
-    if(turn === '' ){
+    if(turn == '' ){
       return "Moves Left: " + moves
     }
   }
