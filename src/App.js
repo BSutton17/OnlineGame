@@ -333,7 +333,7 @@ function App({ socket, username, room }) {
     return () => {
       socket.off('receiveUpdated');
     };
-  },[side, color, turn, setNewColor, socket])
+  },[side, color, turn, socket])
 
 
   //useEffect for broadcasting the resetting of a class
