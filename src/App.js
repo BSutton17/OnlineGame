@@ -59,7 +59,7 @@ function App({ socket, username, room }) {
       });
       return prevBlueMoney;
     });
-  }, []);
+  }, [socket]);
 
   const setNewColor = useCallback(() => {
     if (!side) {
@@ -143,10 +143,10 @@ catch{
           {content}
         </button>
       );
-    }, [handleDragStart]);
+    }, [handleDragStart, handleDrop, handleMouseDown, handleMouseUp, moves]);
 
       // Reset colors of all cells to their original state based on their position
-  const resetColors = () => {
+  const resetColors = useCallback(() => {
     setGrid((prevGrid) => {
      
       return prevGrid.map((cell) => {
@@ -180,7 +180,7 @@ catch{
       });
     });
     sendGridUpdate()
-  };
+  },[]);
 
 // Updated handleDrop function to prevent dropping if the player can't afford the character
 const handleDrop = useCallback((e, id, color, moves) => {
@@ -276,7 +276,7 @@ const handleDrop = useCallback((e, id, color, moves) => {
   sendGridUpdate()
   resetColors();
   }
-}, [])
+}, [determineIcon, handleAbilityDrop, handleMoney, moveBox, renderBoxButton, resetColors, sendGridUpdate, side, updateMoves, validateMove])
 
 
      // Handle the mouse up event to reset the colors back to their original state
