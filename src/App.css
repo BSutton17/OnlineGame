@@ -1,0 +1,227 @@
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+  background-color: rgb(7, 7, 7);
+  overflow-x: hidden;
+}
+
+button {
+  outline: hidden;
+}
+
+h1{
+  font-size: 1.2rem;
+}
+
+#Outer-Container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1.5rem;
+  width: 150rem;
+  height: auto;
+}
+
+#above-inventory {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+#board-box {
+  display: grid;
+  grid-template-columns: repeat(20, 3.5em);
+  grid-template-rows: repeat(9, 3.5em);  
+}
+
+.box-white, .box-orange, .box-blue, .box-green, .box-purple, .box-dark-green, .box-red {
+  height: 4.2em;
+  width: 4.2em;
+}
+
+.box-green {
+  background-color: rgb(15, 211, 15);
+}
+
+.box-dark-green {
+  background-color: green;
+}
+
+.box-orange {
+  background-color: rgb(241, 76, 11);
+}
+
+.box-white {
+  background-color: white;
+}
+
+.box-blue {
+  background-color: blue;
+  color: white;
+}
+
+.box-purple {
+  background-color: rgb(67, 32, 240);
+}
+
+.box-red {
+  background-color: rgb(217, 68, 4);
+}
+
+.box-aqua {
+  background-color: rgb(11, 196, 238);
+}
+
+.box-yellow {
+  background-color: rgb(216, 132, 5);
+}
+
+.box-grey {
+  background-color: rgb(181, 178, 178);
+}
+
+.box-black {
+  background-color: black;
+  color: transparent;
+}
+
+#inventory {
+  width: 75em;
+  height: 15vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1em;
+}
+
+.selector-blue, .selector-orange, #change {
+  color: white;
+  height: 15vh;
+  width: 10em;
+  background-color: transparent;
+  border: 1px solid gray;
+}
+
+#change {
+  margin-left: 1%;
+}
+
+.selector-blue {
+  color: blue
+}
+
+.selector-orange {
+  color: orange
+}
+
+#reset {
+  color: white;
+  height: 5vh;
+  width: 10em;
+  background-color: transparent;
+  border: 1px solid gray;
+}
+
+#Arrow {
+  position: relative;
+  color: white;
+  height: 5vh;
+  width: 4em;
+  background-color: transparent;
+  border: 1px solid gray;
+  margin-left: 5%;
+}
+
+#below-inventory {
+  width: 25rem;
+  margin-top: 0.5%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#moneyLeft, #moneyRight {
+  position: relative;
+  height: 40vh;
+  width: 9em;
+}
+
+#Ability {
+  position: relative;
+  color: rgb(26, 212, 23);
+  height: 5vh;
+  width: 4em;
+  background-color: transparent;
+  border: 1px solid gray;
+  margin-left: 5%;
+}
+
+#fireBall {
+  height: 5vh;
+  width: 4em;
+  margin-left: 2%;
+}
+
+#wrapper-container {
+  display: flex;
+  width: 100rem;
+}
+
+.cash{
+  color: white;
+  font-size: 3rem;
+}
+
+.cash-Title{
+  color: white;
+  font-size: 2rem;
+}
+
+#turn{
+  position: fixed;
+  top: 0;
+  color: white;
+  font-size: 2rem;
+}
+
+.backGround{
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: linear-gradient(135deg, rgb(241, 76, 11), blue);
+}
+
+.home-wrapper > input{
+  border: 1px solid white;
+  width: 80%;
+  margin: 10px;
+}
+
+.home-wrapper > h1{
+  font-size: 12vh;
+  margin-bottom: -2.5vh;
+}
+.home-wrapper{
+  color: white;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 20px;
+  height: 50vh;
+}
+
+#room{
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  color: gray;
+}
