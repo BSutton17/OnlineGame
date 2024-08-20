@@ -109,7 +109,9 @@ function App({ socket, username, room }) {
       if(icon == undefined){
         icon = ''
       }
-
+        
+      console.log(icon)
+      
         return (
           <button
             key={cell.id}
@@ -161,7 +163,7 @@ const updateMoneyState = () => {
     setOrangeMoney((prevOrangeMoney) => {
       const updatedBlueMoney = prevBlueMoney; // or apply any logic if you need to
       const updatedOrangeMoney = prevOrangeMoney; // or apply any logic if you need to
-      socket.emit("sendMoneyUpdate", [updatedBlueMoney, updatedOrangeMoney]);
+      socket.emit("sendMoneyUpdate", [updatedBlueMoney, updatedOrangeMoney], room);
       return prevOrangeMoney;
     });
     return prevBlueMoney;
@@ -971,3 +973,8 @@ const handleAbilityDrop = (cell, cellI, cellJ, color, determineBackground) => {
     )
   }
 export default App
+
+
+
+
+
