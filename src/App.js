@@ -195,7 +195,7 @@ const serializeGrid = (grid) => {
 const sendGridUpdate = () => {
   setGrid((prevGrid) => {
     const serializedGrid = serializeGrid(prevGrid);
-    console.log(serializedGrid)
+    console.log("serializedGrid: " + serializedGrid )
     socket.emit("sendGridUpdate", serializedGrid, room);
     return prevGrid;
   });
