@@ -110,7 +110,7 @@ function App({ socket, username, room }) {
         icon = ''
       }
         
-      console.log("cell.content: " + cell.content)  
+      console.log("cell.contents: " + cell.content)  
       console.log(icon)
       
         return (
