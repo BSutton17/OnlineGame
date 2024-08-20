@@ -125,7 +125,7 @@ function App({ socket, username, room }) {
             onDragOver={(e) => handleDragOver(e)}
             onDrop={(e) => handleDrop(e, cell.id, color, moves)}
           >
-            {icon}
+            {cell.content}
           </button>
         );
       }));
