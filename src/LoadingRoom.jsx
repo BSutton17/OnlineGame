@@ -3,7 +3,7 @@ import { io } from "socket.io-client";
 import App from "./App";
 import './App.css'
 
-const socket = io.connect("https://online-game-server.vercel.app/")
+const socket = io("https://online-game-server.vercel.app/")
 
 const LoadingRoom = () =>{
     const [userName, setUsername] = useState("");
