@@ -3,7 +3,7 @@ import { io } from "socket.io-client";
 import App from "./App";
 import './App.css'
 
-const socket = io("https://online-game-server.vercel.app/")
+const socket = io("https://overloardserver-3dcf0e3323a3.herokuapp.com/")
 
 const LoadingRoom = () =>{
     const [userName, setUsername] = useState("");
