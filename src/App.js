@@ -182,7 +182,8 @@ const serializeGrid = (grid) => {
   return grid.map((cell) => {
     return {
       id: cell.props.id,
-      content: cell.props.children == 'B' ? 'B' : determineLetter(cell.props.children),
+      content: "A",
+      //content: cell.props.children == 'B' ? 'B' : determineLetter(cell.props.children),
       className: cell.props.className,
       draggable: cell.props.draggable,
     };
@@ -365,7 +366,7 @@ const sendGridUpdate = () => {
     }
 
     let drag = true;
-    if(content == ''){
+    if(content == '' || content== "B")){
       drag = false
     }
    
