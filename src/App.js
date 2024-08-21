@@ -365,7 +365,7 @@ const sendGridUpdate = () => {
     }
 
     let drag = true;
-    if(content == '' || content== "B")){
+    if(content == '' || content== "B"){
       drag = false
     }
    
@@ -818,9 +818,9 @@ const handleAbilityDrop = (cell, cellI, cellJ, color, determineBackground) => {
     }
  
     if (color === 'selector-blue') {
-      setBlueMoney(prevBlueMoney => prevBlueMoney - deduction/2);
+      setBlueMoney(prevBlueMoney => prevBlueMoney - deduction);
     } else {
-      setOrangeMoney(prevOrangeMoney => prevOrangeMoney - deduction/2);
+      setOrangeMoney(prevOrangeMoney => prevOrangeMoney - deduction);
     }
 
     updateMoneyState()
