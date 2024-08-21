@@ -102,7 +102,7 @@ function App({ socket, username, room }) {
   //update the grid for clients
   useEffect(() => {
     socket.on('receiveGridUpdated', (serializedGrid) => {
-      console.log("recieved grid: " + serializedGrid)
+      console.log("recieved grid: " + JSON.stringify(serializedGrid, null, 2))
       setGrid(serializedGrid.map((cell) => {
       const [cellI, cellJ] = cell.id.split('-').map(Number);
       let icon = determineSentIcon(cell.content)
@@ -110,10 +110,6 @@ function App({ socket, username, room }) {
       if(icon == undefined){
         icon = ''
       }
-        
-      console.log("cell.contents: " + cell.content)  
-      console.log(icon)
-      
         return (
           <button
             key={cell.id}
