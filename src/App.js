@@ -182,7 +182,7 @@ const serializeGrid = (grid) => {
   return grid.map((cell) => {
     return {
       id: cell.props.id,
-      content: "A",
+      content: cell.props.children == "B" ? "B" : determineLetter(cell.props.children),
       className: cell.props.className,
       draggable: cell.props.draggable,
     };
@@ -285,7 +285,7 @@ const sendGridUpdate = () => {
     if (!icon || !icon.type || !icon.props) {
       return '';
     }
-    
+    console.log(icon.type.name)
     switch (icon.type.name) {
       case 'TbSwords':
         return 'MM';
