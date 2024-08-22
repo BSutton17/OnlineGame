@@ -180,11 +180,11 @@ const updateMoves = () =>{
 // icon, cell.className
 const serializeGrid = (grid) => {
   return grid.map((cell) => {
-    //const content = cell.props.children
-    //const character = content && content.props && content.props.name ? content.props.name : ''
+    const content = cell.props.children
+    const character = content && content.props && content.props.name ? content.props.name : ''
     return {
       id: cell.props.id,
-      content: cell.props.children == "B" ? "B" : determineLetter(cell.props.children),
+      content: character,
       className: cell.props.className,
       draggable: cell.props.draggable,
     };
