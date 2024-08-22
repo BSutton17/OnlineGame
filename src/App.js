@@ -180,6 +180,8 @@ const updateMoves = () =>{
 // icon, cell.className
 const serializeGrid = (grid) => {
   return grid.map((cell) => {
+    //const content = cell.props.children
+    //const character = content && content.props && content.props.name ? content.props.name : ''
     return {
       id: cell.props.id,
       content: cell.props.children == "B" ? "B" : determineLetter(cell.props.children),
@@ -285,7 +287,7 @@ const sendGridUpdate = () => {
     if (!icon || !icon.type || !icon.props) {
       return '';
     }
-    console.log(icon.type.name)
+    console.log("icon.type.name: " + icon.type.name)
     switch (icon.type.name) {
       case 'TbSwords':
         return 'MM';
