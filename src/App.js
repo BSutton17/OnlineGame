@@ -182,7 +182,7 @@ const serializeGrid = (grid) => {
   return grid.map((cell) => {
     return {
       id: cell.props.id,
-      content: cell.props.children,
+      content: "A",
       className: cell.props.className,
       draggable: cell.props.draggable,
     };
