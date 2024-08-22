@@ -394,13 +394,13 @@ function validateMove(e, character, color, moves, side, beforeChangeRef, setTurn
     }, 1500);
     return false;
   } 
-  else if (
+  /*(else if (
     (beforeChangeRef.current === 'box-blue' && side === false) ||
     (beforeChangeRef.current === 'box-orange' && side === true)
   ) {
     e.preventDefault();
     return false;
-  }
+  }*/
 
   return true;
 }
