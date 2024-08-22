@@ -30,6 +30,7 @@ function App({ socket, username, room }) {
       socket.on('assignRoles', ({ blueUser, orangeUser }) => {
         setBlueUser(blueUser + "'s");
         setOrangeUser(orangeUser + "'s");
+        //sendGridUpdate()
     });
 
     socket.on('roomFull', () => {
@@ -102,14 +103,16 @@ function App({ socket, username, room }) {
   //update the grid for clients
   useEffect(() => {
     socket.on('receiveGridUpdated', (serializedGrid) => {
-      console.log("recieved grid: " + JSON.stringify(serializedGrid, null, 2))
       setGrid(serializedGrid.map((cell) => {
       const [cellI, cellJ] = cell.id.split('-').map(Number);
       let icon = determineSentIcon(cell.content)
-    
+      let className = determineBackground(cellI, cellJ, cell.content)
       if(icon == undefined){
         icon = ''
       }
+      //console.log(cellI + "-" + cellJ + ": " + cell.content + ", " + icon + ", " + cell.className)
+
+      
         return (
           <button
             key={cell.id}
@@ -180,8 +183,8 @@ const updateMoves = () =>{
 // icon, cell.className
 const serializeGrid = (grid) => {
   return grid.map((cell) => {
-    const content = cell.props.children
-    const character = content && content.props && content.props.name ? content.props.name : ''
+    let content = cell.props.children
+    let character = content == "B" ? "B" : content && content.props && content.props.name ? content.props.name : ''
     return {
       id: cell.props.id,
       content: character,
@@ -194,7 +197,6 @@ const serializeGrid = (grid) => {
 const sendGridUpdate = () => {
   setGrid((prevGrid) => {
     const serializedGrid = serializeGrid(prevGrid);
-    console.log("serializedGrid: " + serializedGrid )
     socket.emit("sendGridUpdate", serializedGrid, room);
     return prevGrid;
   });
@@ -945,8 +947,3 @@ const handleAbilityDrop = (cell, cellI, cellJ, color, determineBackground) => {
     )
   }
 export default App
-
-
-
-
-
