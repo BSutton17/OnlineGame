@@ -282,35 +282,6 @@ const sendGridUpdate = () => {
     e.preventDefault()
   }
 
-
-  const determineLetter = (icon) => {
-    if (!icon || !icon.type || !icon.props) {
-      return '';
-    }
-    console.log("icon.type.name: " + icon.type.name)
-    switch (icon.type.name) {
-      case 'TbSwords':
-        return 'MM';
-      case 'TbBow':
-        return 'A';
-      case 'TbCross':
-        return 'P';
-      case 'TbShovel':
-        return 'M';
-      case 'PiMagicWandFill':
-        return 'W';
-      case 'GiCrownedSkull':
-        return 'N';
-      case 'PiHammerFill':
-        return 'C';
-      case 'AiFillFire':
-        return 'F'
-      default:
-        return ''; // or return null, undefined, or any fallback value you prefer
-    }
-  }
-
-
   const determineSentIcon = (character) =>{
     switch(character){
       case 'MM':
