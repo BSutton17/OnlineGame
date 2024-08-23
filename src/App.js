@@ -2,36 +2,35 @@ import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import { AiFillFire } from "react-icons/ai";
 import { TbBow, TbSwords, TbCross, TbShovel  } from "react-icons/tb";
-import { PiMagicWandFill,PiHammerFill  } from "react-icons/pi";
+import { PiMagicWandFill,PiHammerFill, PiArrowFatLinesLeftFill  } from "react-icons/pi";
 import { GiCrownedSkull } from "react-icons/gi";
 
 function App({ socket, username, room }) {
+  const [grid, setGrid] = useState([]); //stores the grid array
+  const [color, setColor] = useState("selector-blue"); //tracks the color of the inv
+  const [side, setSide] = useState(true) //a boolean tracker for if statements
+  const [blueMoney, setBlueMoney] = useState(600) 
+  const [orangeMoney, setOrangeMoney] = useState(600)
+  const [turn, setTurn] = useState("") //A string for the top of the page
+  const [moves, setMoves] = useState(3)//Tracks moves
+  const [blueUser, setBlueUser] = useState("")//blue sides userName
+  const [orangeUser, setOrangeUser] = useState("")//orange sides userName
+  const [userSide, setUserSide] = useState()
 
-
-  const [grid, setGrid] = useState([]);
   const dragPositionRef = useRef(null); // Ref to store position of dragged cell
   const dragClassRef = useRef(null)
   const dragCharacterRef = useRef(null);
   const beforeChangeRef = useRef(null)
-  const [color, setColor] = useState("selector-blue");
-  const [side, setSide] = useState(true)
-  const [blueMoney, setBlueMoney] = useState(600)
-  const [orangeMoney, setOrangeMoney] = useState(600)
-  const [turn, setTurn] = useState("")
-  const [moves, setMoves] = useState(3)
-  const [blueUser, setBlueUser] = useState("")
-  const [orangeUser, setOrangeUser] = useState("")
   
 
   useEffect(() => {
-
-    // Handle role assignment from server
-    // Listen for role assignment from server
       socket.on('assignRoles', ({ blueUser, orangeUser }) => {
         setBlueUser(blueUser + "'s");
         setOrangeUser(orangeUser + "'s");
-        //sendGridUpdate()
+        setUserSide(username == blueUser ? blueUser : orangeUser)
     });
+
+   
 
     socket.on('roomFull', () => {
         console.log('full')
@@ -87,17 +86,16 @@ function App({ socket, username, room }) {
   },[grid, turn])
  
   // UseEffect For broadcasting colors
-  useEffect(()=>{
+useEffect(() => {
     socket.on('receiveMovesUpdated', (newMoves) => {
-      setMoves(newMoves)
+        setMoves(newMoves);
     });
 
-
-    // Cleanup on component unmount
     return () => {
-      socket.off('receiveMovesUpdated');
+        socket.off('receiveMovesUpdated');
     };
-  },[grid, turn])
+}, [grid, moves]);
+
 
 
   //update the grid for clients
@@ -172,6 +170,7 @@ const updateMoneyState = () => {
 const updateMoves = () =>{
   setMoves((prevMoves)=>{
     const updatedMoves = prevMoves
+    console.log("updatedMoves: " + updatedMoves)
     socket.emit("sendMovesUpdate", updatedMoves, room)
     return prevMoves
   })
@@ -232,20 +231,27 @@ const sendGridUpdate = () => {
 
   const setNewColor = () => {
     if (!side) {
-      setOrangeMoney(prevOrangeMoney => prevOrangeMoney +125);
-       setColor("selector-blue");
-       setTurn("Blue's Turn");
+        setOrangeMoney(prevOrangeMoney => prevOrangeMoney + 125);
+        setColor("selector-blue");
+        setTurn("Blue's Turn");
+        setMoves(3); // Reset moves for blue's turn
     } else {
-      setBlueMoney(prevBlueMoney => prevBlueMoney +125);
-       setColor("selector-orange");
-       setTurn("Orange's Turn");
+        setBlueMoney(prevBlueMoney => prevBlueMoney + 125);
+        setColor("selector-orange");
+        setTurn("Orange's Turn");
+        setMoves(3); // Reset moves for orange's turn
     }
+
     setTimeout(() => {
-       setTurn("");
+        setTurn("");
     }, 2000);
+    
+    console.log(moves)
     setSide((prevSide) => !prevSide);
-    updateMoneyState()
- };
+    updateMoneyState();
+    updateMoves(); // Sync the reset moves with the server
+};
+
 
   // Function to create the initial grid
   const createGrid = (num, color) => {
@@ -278,12 +284,30 @@ const sendGridUpdate = () => {
  
   // Allow drop event
  // Allow drop event
-const handleDragOver = (e, className) => {
-    const iconName = e.target.getAttribute('name');
-  if (!(side && className === 'box-blue' && iconName != null)) {
-      e.preventDefault();
+ const handleDragOver = (e, className) => {
+  // Determine if the dragged item is from the inventory
+  const isFromInv = dragClassRef.current === "selector-blue" || dragClassRef.current === "selector-orange";
+  const iconName = e.target.getAttribute('name');
+
+  console.log(className)
+  console.log(e.target.className)
+
+  // Allow drop if the item is from the inventory and the target is a grey box
+  if (isFromInv && e.target.className === "box-grey") {
+    e.preventDefault();
   }
+  // Allow drop if the item is not from the inventory and the target box matches the side
+  else if (!isFromInv && side && className === 'box-blue' && iconName != null) {
+    e.preventDefault();
+  } 
+
+  //only move to green sqaures (unless it is an enemy sqaure)
+  else if(!isFromInv && (e.target.className == 'box-green' || e.target.className == 'box-dark-green') ||  iconName != null){
+    e.preventDefault();
+  }
+
 };
+
 
 
   const determineSentIcon = (character) =>{
@@ -383,7 +407,7 @@ function canAffordCharacter(character, color) {
          (color === 'selector-orange' && orangeMoney >= cost);
 }
 
-function validateMove(e, character, color, move, setTurn) {
+function validateMove(e, character, color, setTurn) {
   if (!canAffordCharacter(character, color)) {
     e.preventDefault();
     setTurn("Cannot Afford");
@@ -392,7 +416,7 @@ function validateMove(e, character, color, move, setTurn) {
     }, 1500);
     return false;
   } 
-   if (move <= 0) {
+   if (moves <= 0) {
     e.preventDefault();
     setTurn("Out of Moves");
     setTimeout(() => {
@@ -401,19 +425,16 @@ function validateMove(e, character, color, move, setTurn) {
     return false;
   } 
 
-  /*(else if (
-    (beforeChangeRef.current === 'box-blue' && side === false) ||
-    (beforeChangeRef.current === 'box-orange' && side === true)
-  ) {
-    e.preventDefault();
-    return false;
-  }*/
-
   return true;
 }
 
 function handleDragStart(e, character) {
-  validateMove(e, character, color, moves, setTurn);
+  // blue/orange User have an 's after for the UI so add it here
+  //if it is blue's turn, don't let orange go and vice versa
+  if((!side && userSide+"'s" == blueUser) || (side && userSide+"'s" == orangeUser)){
+    e.preventDefault()
+  }
+  validateMove(e, character, color, setTurn);
 try{
   e.dataTransfer.setData('text/plain', character);
   dragClassRef.current = e.target.className;
@@ -433,7 +454,7 @@ catch{
 // Updated handleDrop function to prevent dropping if the player can't afford the character
 function handleDrop(e, id, color) {
   const droppedContent = e.dataTransfer.getData('text/plain');
-
+  
   if (droppedContent !== 'Arrow' && droppedContent !== 'fireBall' && droppedContent != 'Ability') {
     setMoves(prevMoves => prevMoves - 1);
     updateMoves()
@@ -561,9 +582,6 @@ const handleAbilityDrop = (cell, cellI, cellJ, color, determineBackground) => {
         let condition2 = false;
         let condition3= false;
         // Determine conditions based on classNamr and character type
-
-
-
 
         if (side =='box-blue') {
           switch (character.props.name) {
