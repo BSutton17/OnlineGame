@@ -289,9 +289,10 @@ const sendGridUpdate = () => {
   const isFromInv = dragClassRef.current === "selector-blue" || dragClassRef.current === "selector-orange";
   const iconName = e.target.getAttribute('name');
 
-  console.log(className)
-  console.log(e.target.className)
-
+  //allow barriers
+  if(dragCharacterRef.current === 'B' && iconName === null){
+    e.preventDefault()
+  }
   // Allow drop if the item is from the inventory and the target is a grey box
   if (isFromInv && e.target.className === "box-grey") {
     e.preventDefault();
@@ -305,10 +306,7 @@ const sendGridUpdate = () => {
   else if(!isFromInv && (e.target.className == 'box-green' || e.target.className == 'box-dark-green') ||  iconName != null){
     e.preventDefault();
   }
-
 };
-
-
 
   const determineSentIcon = (character) =>{
     switch(character){
