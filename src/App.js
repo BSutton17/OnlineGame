@@ -15,8 +15,8 @@ function App({ socket, username, room }) {
   const beforeChangeRef = useRef(null)
   const [color, setColor] = useState("selector-blue");
   const [side, setSide] = useState(true)
-  const [blueMoney, setBlueMoney] = useState(550)
-  const [orangeMoney, setOrangeMoney] = useState(550)
+  const [blueMoney, setBlueMoney] = useState(600)
+  const [orangeMoney, setOrangeMoney] = useState(600)
   const [turn, setTurn] = useState("")
   const [moves, setMoves] = useState(3)
   const [blueUser, setBlueUser] = useState("")
@@ -106,12 +106,9 @@ function App({ socket, username, room }) {
       setGrid(serializedGrid.map((cell) => {
       const [cellI, cellJ] = cell.id.split('-').map(Number);
       let icon = determineSentIcon(cell.content)
-      let className = determineBackground(cellI, cellJ, cell.content)
       if(icon == undefined){
         icon = ''
       }
-      //console.log(cellI + "-" + cellJ + ": " + cell.content + ", " + icon + ", " + cell.className)
-
       
         return (
           <button
@@ -121,9 +118,9 @@ function App({ socket, username, room }) {
             id={cell.id}
             onMouseDown={() => handleMouseDown(cellI, cellJ, icon, cell.className)}
             onMouseUp={handleMouseUp}
-            onDragStart={(e) => handleDragStart(e, icon, moves)}
-            onDragOver={(e) => handleDragOver(e)}
-            onDrop={(e) => handleDrop(e, cell.id, color, moves)}
+            onDragStart={(e) => handleDragStart(e, icon)}
+            onDragOver={(e) => handleDragOver(e, cell.className)}
+            onDrop={(e) => handleDrop(e, cell.id, color)}
           >
             {icon}
           </button>
@@ -224,7 +221,7 @@ const sendGridUpdate = () => {
             onMouseUp={handleMouseUp}
             onDragStart={cell.props.onDragStart}
             onDragOver={(e) => handleDragOver(e, className)}
-            onDrop={(e) => handleDrop(e, cell.props.id, color, moves)}
+            onDrop={(e) => handleDrop(e, cell.props.id, color)}
           >
             {cell.props.children}
           </button>
@@ -235,11 +232,11 @@ const sendGridUpdate = () => {
 
   const setNewColor = () => {
     if (!side) {
-      setOrangeMoney(prevOrangeMoney => prevOrangeMoney +100);
+      setOrangeMoney(prevOrangeMoney => prevOrangeMoney +125);
        setColor("selector-blue");
        setTurn("Blue's Turn");
     } else {
-      setBlueMoney(prevBlueMoney => prevBlueMoney +100);
+      setBlueMoney(prevBlueMoney => prevBlueMoney +125);
        setColor("selector-orange");
        setTurn("Orange's Turn");
     }
@@ -266,9 +263,9 @@ const sendGridUpdate = () => {
             id={`${i}-${j}`}
             onMouseDown={() => handleMouseDown(i, j, content, className)}
             onMouseUp={handleMouseUp}
-            onDragStart={(e) => handleDragStart(e, content, moves)}
-            onDragOver={(e) => handleDragOver(e, className)}
-            onDrop={(e) => handleDrop(e, `${i}-${j}`, color, moves)}
+            onDragStart={(e) => handleDragStart(e, content)}
+            onDragOver={(e) => handleDragOver(e,className)}
+            onDrop={(e) => handleDrop(e, `${i}-${j}`, color)}
             key={`${i}-${j}`}
           >
             {content}
@@ -280,9 +277,14 @@ const sendGridUpdate = () => {
   };
  
   // Allow drop event
-  const handleDragOver = (e) => {
-    e.preventDefault()
+ // Allow drop event
+const handleDragOver = (e, className) => {
+    const iconName = e.target.getAttribute('name');
+  if (!(side && className === 'box-blue' && iconName != null)) {
+      e.preventDefault();
   }
+};
+
 
   const determineSentIcon = (character) =>{
     switch(character){
@@ -335,32 +337,30 @@ const sendGridUpdate = () => {
   }
  
   //when called it creates a cell with updated information
-  const renderBoxButton = (className, content, id, cellI, cellJ, color) => {
-    if(content != '' || content != undefined){
-    }
+const renderBoxButton = (className, content, id, cellI, cellJ, color) => {
 
-    let drag = true;
-    if(content == '' || content== "B"){
-      drag = false
-    }
-   
-    return (
-      <button
-        className={className}
-        draggable={drag}
-        id={id}
-        onMouseDown={() => handleMouseDown(cellI, cellJ, content, className)}
-        onMouseUp={handleMouseUp}
-        onDragStart={(e) => handleDragStart(e, content, moves)}
-        onDragOver={(e) => handleDragOver(e)}
-        onDrop={(e) => handleDrop(e, id, color, moves)}
-      >
-        {content}
-      </button>
-    );
-    
-  };
- 
+
+  let drag = true;
+  if (content === '' || content === "B") {
+    drag = false;
+  }
+
+  return (
+    <button
+      className={className}
+      draggable={drag}
+      id={id}
+      onMouseDown={() => handleMouseDown(cellI, cellJ, content, className)}
+      onMouseUp={handleMouseUp}
+      onDragStart={(e) => handleDragStart(e, content)}
+      onDragOver={(e) => handleDragOver(e, className)}
+      onDrop={(e) => handleDrop(e, id, color)}
+    >
+      {content}
+    </button>
+  );
+};
+
 // Define function to get the cost of a character
 function getCharacterCost(character) {
   switch(character) {
@@ -383,11 +383,7 @@ function canAffordCharacter(character, color) {
          (color === 'selector-orange' && orangeMoney >= cost);
 }
 
-function outOfMoves(moves){
-  return moves >= 0
-}
-
-function validateMove(e, character, color, moves, side, beforeChangeRef, setTurn) {
+function validateMove(e, character, color, move, setTurn) {
   if (!canAffordCharacter(character, color)) {
     e.preventDefault();
     setTurn("Cannot Afford");
@@ -396,6 +392,15 @@ function validateMove(e, character, color, moves, side, beforeChangeRef, setTurn
     }, 1500);
     return false;
   } 
+   if (move <= 0) {
+    e.preventDefault();
+    setTurn("Out of Moves");
+    setTimeout(() => {
+      setTurn("");
+    }, 1500);
+    return false;
+  } 
+
   /*(else if (
     (beforeChangeRef.current === 'box-blue' && side === false) ||
     (beforeChangeRef.current === 'box-orange' && side === true)
@@ -407,17 +412,8 @@ function validateMove(e, character, color, moves, side, beforeChangeRef, setTurn
   return true;
 }
 
-//handleDragStart 
-function handleDragStart(e, character, moves) {
-  // if (outOfMoves(moves)) {
-  //   e.preventDefault();
-  //   setTurn("Out of Moves");
-  //   setTimeout(() => {
-  //     setTurn("");
-  //   }, 1500);
-  //   return false;
-  // } 
-  validateMove(e, character, color, moves, side, beforeChangeRef, setTurn);
+function handleDragStart(e, character) {
+  validateMove(e, character, color, moves, setTurn);
 try{
   e.dataTransfer.setData('text/plain', character);
   dragClassRef.current = e.target.className;
@@ -428,7 +424,6 @@ catch{
   dragClassRef.current = e.target.className;
   dragCharacterRef.current = character;
 
-
   e.dataTransfer.setData('text/plain', e.target.id);
   e.dataTransfer.effectAllowed = 'move';
 }
@@ -436,14 +431,13 @@ catch{
 }
 
 // Updated handleDrop function to prevent dropping if the player can't afford the character
-function handleDrop(e, id, color, moves) {
+function handleDrop(e, id, color) {
   const droppedContent = e.dataTransfer.getData('text/plain');
 
   if (droppedContent !== 'Arrow' && droppedContent !== 'fireBall' && droppedContent != 'Ability') {
     setMoves(prevMoves => prevMoves - 1);
     updateMoves()
-  }  
-  validateMove(e, droppedContent, color, moves, side, beforeChangeRef, setTurn);
+  } 
   resetColors();
 
   const [targetI, targetJ] = id.split('-').map(Number);
@@ -666,7 +660,7 @@ const handleAbilityDrop = (cell, cellI, cellJ, color, determineBackground) => {
               onMouseDown={() => handleMouseDown(cellI, cellJ, character.props.name, color)}
               onMouseUp={handleMouseUp}
               onDragStart={cell.props.onDragStart}
-              onDragOver={(e) => handleDragOver(e)}
+              onDragOver={(e) => handleDragOver(e, "box-green")}
               onDrop={cell.props.onDrop}
             >
               {character}
@@ -720,7 +714,7 @@ const handleAbilityDrop = (cell, cellI, cellJ, color, determineBackground) => {
             onMouseDown={() => handleMouseDown(cellI, cellJ, cell.props.children, className)}
             onMouseUp={handleMouseUp}
             onDragStart={cell.props.onDragStart}
-            onDragOver={(e) => handleDragOver(e)}
+            onDragOver={(e) => handleDragOver(e, className)}
             onDrop={(e) => handleDrop(e, cell.props.id, color)}
           >
             {cell.props.children}
@@ -733,8 +727,8 @@ const handleAbilityDrop = (cell, cellI, cellJ, color, determineBackground) => {
 
 
   const handleReset = () => {
-    setBlueMoney(550)
-    setOrangeMoney(550)
+    setBlueMoney(600)
+    setOrangeMoney(600)
     updateMoneyState()
     setColor('selector-blue')
     setSide(true)
@@ -793,9 +787,9 @@ const handleAbilityDrop = (cell, cellI, cellJ, color, determineBackground) => {
     }
  
     if (color === 'selector-blue') {
-      setBlueMoney(prevBlueMoney => prevBlueMoney - deduction);
+      setBlueMoney(prevBlueMoney => prevBlueMoney - deduction/2);
     } else {
-      setOrangeMoney(prevOrangeMoney => prevOrangeMoney - deduction);
+      setOrangeMoney(prevOrangeMoney => prevOrangeMoney - deduction/2);
     }
 
     updateMoneyState()
