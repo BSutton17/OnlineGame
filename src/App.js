@@ -474,6 +474,13 @@ function handleDrop(e, id, color) {
     case "fireBall":
     case "Ri":
     case "Re":
+    case "MM":
+    case 'A':
+    case "P":
+    case "M":
+    case "W":
+    case "N":
+    case "C":
       removeMoves = true;
       break;
     default:
