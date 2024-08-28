@@ -489,7 +489,6 @@ function handleDrop(e, id, color) {
     case "fireBall":
     case "Ri":
     case "Re":
-    case barrier:
       removeMoves = true;
       break;
     default:
