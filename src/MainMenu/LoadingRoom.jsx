@@ -7,7 +7,7 @@ import { useContext } from 'react';
 import { useGameContext } from '../Context/GameContext';
 import './HTP.css';
 
-const socket = io.connect("http://localhost:3001");
+const socket = io.connect("https://overloardserver-3dcf0e3323a3.herokuapp.com/")
 
 const LoadingRoom = () => {
   const [userName, setUsername] = useState("");
