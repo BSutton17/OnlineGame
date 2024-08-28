@@ -38,7 +38,6 @@ function App({ socket, username, room }) {
       setCanMove(true);
     }
   }, [grid]);
-  
 
   useEffect(() => {
       socket.on('assignRoles', ({ blueUser, orangeUser }) => {
@@ -46,8 +45,6 @@ function App({ socket, username, room }) {
         setOrangeUser(orangeUser + "'s");
         setUserSide(username == blueUser ? blueUser : orangeUser)
     });
-
-   
 
     socket.on('roomFull', () => {
         console.log('full')
@@ -67,12 +64,10 @@ function App({ socket, username, room }) {
    const carpenter = "C";
    const barrier = 'B'
 
-
    useEffect(() => {
     setGrid(createGrid(20, color))
       // Listening for the 'testEmit' event from the server
   },[])
-
 
   //send new side to clients
   useEffect(()=>{
@@ -80,7 +75,6 @@ function App({ socket, username, room }) {
       setSide(newSide)
       setNewColor()
     });
-
 
     // Cleanup on component unmount
     return () => {
@@ -134,14 +128,12 @@ useEffect(() => {
     };
   }, [grid, turn]);
 
-
    // UseEffect For broadcasting colors
    useEffect(()=>{
     socket.on('receiveMoneyUpdated', (newPrice) => {
       setBlueMoney(newPrice[0])
       setOrangeMoney(newPrice[1])
     });
-
 
     // Cleanup on component unmount
     return () => {
@@ -153,7 +145,6 @@ useEffect(() => {
   const updateSideState = () => {
     socket.emit("sendUpdate", side, room);
 };
-
 
 const updateMoneyState = () => {
   setBlueMoney((prevBlueMoney) => {
@@ -167,7 +158,6 @@ const updateMoneyState = () => {
   });
 };
 
-
 const updateMoves = () =>{
   setMoves((prevMoves)=>{
     const updatedMoves = prevMoves
@@ -175,7 +165,6 @@ const updateMoves = () =>{
     return prevMoves
   })
 }
-
 
 const serializeGrid = (grid) => {
   return grid.map((cell) => {
@@ -242,7 +231,6 @@ const sendGridUpdate = () => {
         setTurn("Orange's Turn");
         setMoves(3);
     }
-
     
     setTimeout(() => {
         setTurn("");
@@ -261,7 +249,6 @@ const sendGridUpdate = () => {
       for (let j = 0; j < num; j++) {
         let content = '';
         let className = determineBackground(i, j);
-
 
         array.push(
           <button
@@ -285,10 +272,10 @@ const sendGridUpdate = () => {
  
   // Allow drop event
  // Allow drop event
- const handleDragOver = (e, className) => {
-  // Determine if the dragged item is from the inventory
-  const isFromInv = dragClassRef.current === "selector-blue" || dragClassRef.current === "selector-orange";
-  const iconName = e.target.getAttribute('name');
+const handleDragOver = (e, className) => {
+// Determine if the dragged item is from the inventory
+const isFromInv = dragClassRef.current === "selector-blue" || dragClassRef.current === "selector-orange";
+const iconName = e.target.getAttribute('name');
 
   //only characters have to be dropped on gray sqaures
   let isChar = false
@@ -321,7 +308,7 @@ const sendGridUpdate = () => {
   if(iconName !== null){
     e.preventDefault();
   }
-//   // Allow drop if the item is from the inventory and the target is a grey box
+  // Allow drop if the item is from the inventory and the target is a grey box
   if (isFromInv && e.target.className === "box-grey") {
     e.preventDefault();
   }
@@ -386,7 +373,7 @@ const sendGridUpdate = () => {
     }
   }
  
-  //when called it creates a cell with updated information
+//when called it creates a cell with updated information
 const renderBoxButton = (className, content, id, cellI, cellJ, color) => {
   let drag = true;
   if (content === '' || content === "B") {
@@ -436,7 +423,6 @@ function handleDragStart(e, character, className) {
   // blue/orange User have an 's after for the UI so add it here
   //if it is blue's turn, don't let orange go and vice versa
   if((!side && (userSide + "'s" == blueUser || className == 'box-blue')) || (side && (userSide+"'s" == orangeUser || className == 'box-orange'))){
-
     e.preventDefault()
   }
  
@@ -460,21 +446,20 @@ function handleDragStart(e, character, className) {
     } 
   }
  
+  try{
+    e.dataTransfer.setData('text/plain', character);
+    dragClassRef.current = e.target.className;
+    dragCharacterRef.current = character;
+  }
+  catch{
+    dragPositionRef.current = e.target.id;
+    dragClassRef.current = e.target.className;
+    dragCharacterRef.current = character;
 
-try{
-  e.dataTransfer.setData('text/plain', character);
-  dragClassRef.current = e.target.className;
-  dragCharacterRef.current = character;
-}
-catch{
-  dragPositionRef.current = e.target.id;
-  dragClassRef.current = e.target.className;
-  dragCharacterRef.current = character;
-
-  e.dataTransfer.setData('text/plain', e.target.id);
-  e.dataTransfer.effectAllowed = 'move';
-}
- 
+    e.dataTransfer.setData('text/plain', e.target.id);
+    e.dataTransfer.effectAllowed = 'move';
+  }
+  
 }
 // Updated handleDrop function to prevent dropping if the player can't afford the character
 function handleDrop(e, id, color) {
@@ -495,10 +480,24 @@ function handleDrop(e, id, color) {
       removeMoves = false;
   }
   
+  let copyMoves;
   if (!removeMoves) {
-    setMoves(prevMoves => prevMoves - 1);
+    setMoves((prevMoves) => {
+      copyMoves = prevMoves - 1
+      console.log(copyMoves)
+      return prevMoves - 1
+    }); 
     updateMoves();
   } 
+
+  if(copyMoves < 0 && !removeMoves){
+    resetColors()
+    setTurn("Out of moves");
+      setTimeout(() => {
+        setTurn("");
+      }, 1500);
+    return;
+  }
 
   resetColors();
 
@@ -852,9 +851,9 @@ const priestAbility = (cell, cellI, cellJ, color, className) => {
   };
 
   const removeMoves = (turn) =>{
-   // updateTurn()
+  let message = moves > 0 ?  moves : 0
     if(turn == '' ){
-      return "Moves Left: " + moves
+      return "Moves Left: " +  message
     }
   }
 
