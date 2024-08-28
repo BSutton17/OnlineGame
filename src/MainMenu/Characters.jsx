@@ -39,7 +39,7 @@ const Characters = () => {
       <h2>Necromancer <GiCrownedSkull /></h2>
       <p>Necromancers have dedicated their entire lives studying and speaking to the undead. The more allies fall, the more powerful they become.</p>
       <p><strong>Range:</strong> Melee</p>
-      <p><strong>Ability:</strong> Rise (Active) Three fallen allies are resurrected as the undead <GiRaiseSkeleton />, the undead can only move one square, but don’t count towards your movement!</p>
+      <p><strong>Ability:</strong> Rise (Active) Three fallen allies are resurrected as the undead <GiRaiseSkeleton />, the undead can only move one square per round, but don’t count towards your movement!</p>
 
       <h2>Carpenter <PiHammerFill /></h2>
       <p>Everyone needs a handyman on sight, carpenters repair barriers, and are some of the best defenders in your empire.</p>
