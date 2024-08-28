@@ -226,3 +226,12 @@ h1{
   right: 0;
   color: gray;
 }
+
+.infoButton{
+  background: transparent;
+  width: 15vw;
+  height: 3vh;
+  border-radius: 20px;
+  margin: 2%;
+  color: white;
+}

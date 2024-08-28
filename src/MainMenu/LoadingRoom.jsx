@@ -7,7 +7,7 @@ import { useContext } from 'react';
 import { useGameContext } from '../Context/GameContext';
 import './HTP.css';
 
-const socket = io.connect("https://overloardserver-3dcf0e3323a3.herokuapp.com/")
+const socket = io.connect("localhost:3001/")
 
 const LoadingRoom = () => {
   const [userName, setUsername] = useState("");
@@ -41,8 +41,8 @@ const LoadingRoom = () => {
               placeholder="Room Id..."
               onChange={(e) => setRoom(e.target.value)}
             />
-            <button onClick={joinRoom}>Play Now</button>
-            <button onClick={() => setShowRules(true)}>How To Play</button>
+            <button className="infoButton" onClick={joinRoom}>Play Now</button>
+            <button  className="infoButton"onClick={() => setShowRules(true)}>How To Play</button>
           </div>
         </div>
       ) : (

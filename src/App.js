@@ -3,7 +3,7 @@ import './App.css';
 import { AiFillFire } from "react-icons/ai";
 import { TbBow, TbSwords, TbCross, TbShovel  } from "react-icons/tb";
 import { PiMagicWandFill,PiHammerFill, PiArrowFatLinesLeftFill  } from "react-icons/pi";
-import { GiCrownedSkull } from "react-icons/gi";
+import { GiCrownedSkull, GiRaiseSkeleton  } from "react-icons/gi";
 import Inventory from './Inventory';
 import Abilities from './Abilities';
 import { GameProvider, useGameContext } from './Context/GameContext';
@@ -19,6 +19,8 @@ function App({ socket, username, room }) {
   const [blueUser, setBlueUser] = useState("")//blue sides userName
   const [orangeUser, setOrangeUser] = useState("")//orange sides userName
   const [userSide, setUserSide] = useState()
+  const [blueDeaths, setBlueDeaths] = useState(0)
+  const [orangeDeaths, setOrangeDeaths] = useState(0)
   
   const [canMove, setCanMove] = useState(true);
 
@@ -178,8 +180,6 @@ const updateMoves = () =>{
 const serializeGrid = (grid) => {
   return grid.map((cell) => {
 
-
-
     let content = cell.props.children
     let character = content == "B" ? "B" : content && content.props && content.props.name ? content.props.name : ''
     return {
@@ -306,21 +306,28 @@ const sendGridUpdate = () => {
       isChar = false;
   }
 
+  if(e.target.className == className && iconName != null){
+    return;
+  }
+
   //allow barriers
-  if(!isChar && iconName === null){
+  if((dragCharacterRef.current == barrier || dragCharacterRef.current == "Sp" ||
+      dragCharacterRef.current == "Re" || dragCharacterRef.current == "fireBall" || dragCharacterRef.current == "Ri" ||
+      dragCharacterRef.current == "Pu" || dragCharacterRef.current == "S"
+  )  && iconName === null){
     e.preventDefault()
   }
-  // Allow drop if the item is from the inventory and the target is a grey box
+
+  if(iconName !== null){
+    e.preventDefault();
+  }
+//   // Allow drop if the item is from the inventory and the target is a grey box
   if (isFromInv && e.target.className === "box-grey") {
     e.preventDefault();
   }
-  // Allow drop if the item is not from the inventory and the target box matches the side
-  else if (!isFromInv && side && className === 'box-blue' && iconName != null) {
-    e.preventDefault();
-  } 
 
   //only move to green sqaures (unless it is an enemy sqaure)
-  else if(!isFromInv && (e.target.className == 'box-green' || e.target.className == 'box-dark-green') ||  iconName != null){
+   if((!isFromInv && (e.target.className == 'box-green' || e.target.className == 'box-dark-green')) || iconName != null){
     e.preventDefault();
   }
 };
@@ -345,6 +352,8 @@ const sendGridUpdate = () => {
           return  <AiFillFire size={35} name='F' />
       case 'B':
           return 'B'
+      case "S":
+          return <GiRaiseSkeleton size={35} name="S" />
       default:
         break;
      
@@ -370,6 +379,8 @@ const sendGridUpdate = () => {
         return renderBoxButton(boxClassName, <PiHammerFill size={35} name='C'/>, id, cellI, cellJ, color)
       case "fireBall":
         return renderBoxButton(boxClassName, <AiFillFire size={35} name='fireBall'/>, id, cellI, cellJ, color)
+      case "S":
+        return renderBoxButton(boxClassName, <GiRaiseSkeleton size={35} name='S'/>, id, cellI, cellJ, color)
       default:
         break;
     }
@@ -421,6 +432,7 @@ function canAffordCharacter(character, color) {
 }
 
 function handleDragStart(e, character, className) {
+  console.log("blueDeaths: " + blueDeaths + " orangeDeaths: " + orangeDeaths)
   // blue/orange User have an 's after for the UI so add it here
   //if it is blue's turn, don't let orange go and vice versa
   if((!side && (userSide + "'s" == blueUser || className == 'box-blue')) || (side && (userSide+"'s" == orangeUser || className == 'box-orange'))){
@@ -464,10 +476,10 @@ catch{
 // Updated handleDrop function to prevent dropping if the player can't afford the character
 function handleDrop(e, id, color) {
   const droppedContent = e.dataTransfer.getData('text/plain');
-  console.log(droppedContent)
+  console.log(droppedContent);
 
-  let removeMoves = false
-  switch(droppedContent){
+  let removeMoves = false;
+  switch(droppedContent) {
     case minuteMen:
     case archer:
     case priest:
@@ -511,14 +523,14 @@ function handleDrop(e, id, color) {
       const isTargetCell = cellI === targetI && cellJ === targetJ;
       const isNeighbor = neighbors.some(([i, j]) => i === cellI && j === cellJ);
 
-      //general cells
-      if (droppedContent === 'Pu' ) {
+      // General cells
+      if (droppedContent === 'Pu') {
         return priestAbility(cell, cellI, cellJ, color, className);
       } else if (droppedContent === 'B' && (cell.props.id === id || isAboveTarget)) {
-        return renderBoxButton('box-black', 'B', cell.props.id, cellI, cellJ, color)
-      } else if (droppedContent === "Sp"  && (cell.props.id === id || isAboveTarget || isBelowTarget)){
+        return renderBoxButton('box-black', 'B', cell.props.id, cellI, cellJ, color);
+      } else if (droppedContent === "Sp"  && (cell.props.id === id || isAboveTarget || isBelowTarget)) {
         return renderBoxButton(className, '', cell.props.id, cellI, cellJ, color);
-      }else if (droppedContent === 'Re' && isTargetCell) {
+      } else if (droppedContent === 'Re' && isTargetCell) {
         // Check if any neighboring cell is a black box
         const hasBlackNeighbor = neighbors.some(([i, j]) => {
           const neighbor = prevGrid.find(cell => cell.props.id === `${i}-${j}`);
@@ -528,12 +540,15 @@ function handleDrop(e, id, color) {
         if (hasBlackNeighbor) {
           return renderBoxButton('box-black', 'B', cell.props.id, cellI, cellJ, color);
         }
-        else{
+        else {
           return cell;
         }
+      }else if(droppedContent === "Ri"  && (cell.props.id === id || isAboveTarget || isBelowTarget)){
+        const boxClassName = dragClassRef.current === "selector-blue" ? 'box-blue' : 'box-orange';
+        return renderBoxButton(boxClassName, <GiRaiseSkeleton size={35} name="S"/>, cell.props.id, cellI, cellJ, color);
       }
 
-      //mcharacter movement
+      // Character movement and enemy detection
       if (isTargetCell) {
         // Handle the target cell based on dropped content
         if (droppedContent === 'Arrow') {
@@ -545,12 +560,10 @@ function handleDrop(e, id, color) {
         } else if (droppedContent === 'fireBall') {
           // Leave the target cell empty and place fireballs in neighbors
           return renderBoxButton(className, "", cell.props.id, cellI, cellJ, color);
-        } else {
-          return renderBoxButton(dragClassRef.current, dragCharacterRef.current, id, cellI, cellJ, color);
-        }
+        } 
       } else if (droppedContent === 'fireBall' && isNeighbor) {
         // Place a fireball in the neighboring cell
-        return renderBoxButton(className, <AiFillFire size={35} name='F' />, cell.props.id, cellI, cellJ, color);
+        return renderBoxButton(className, <AiFillFire size={35} name='F'/>, cell.props.id, cellI, cellJ, color);
       } else if (cellAsId === dragPositionRef.current) {
         // Remove the character from the cell you moved from
         return renderBoxButton(className, '', cell.props.id, cellI, cellJ, color);
@@ -645,6 +658,10 @@ const priestAbility = (cell, cellI, cellJ, color, className) => {
               condition =  (cellI === i && cellJ === j + 1) || (cellI === i - 1&& cellJ === j) || (cellI === i && cellJ === j - 1)
               || (cellI === i + 1 && cellJ === j) || (cellI === i +2 && cellJ === j) ||(cellI === i -2 && cellJ === j);
               break;
+            case "S":
+                condition2 =  (cellI === i && cellJ === j + 1) || (cellI === i - 1&& cellJ === j) || (cellI === i && cellJ === j - 1)
+                || (cellI === i + 1 && cellJ === j);
+                break;
             default:
               condition = (cellI === i && cellJ === j )
               break;
@@ -683,6 +700,10 @@ const priestAbility = (cell, cellI, cellJ, color, className) => {
               condition =  (cellI === i && cellJ === j - 1) || (cellI === i + 1 && cellJ === j) || (cellI === i && cellJ === j + 1)
                           || (cellI === i - 1 && cellJ === j) || (cellI === i - 2 && cellJ === j) ||(cellI === i + 2 && cellJ === j);
               break;
+            case "S":
+                condition2 =  (cellI === i && cellJ === j + 1) || (cellI === i - 1&& cellJ === j) || (cellI === i && cellJ === j - 1)
+                || (cellI === i + 1 && cellJ === j);
+                break;
             default:
               break;
           }
