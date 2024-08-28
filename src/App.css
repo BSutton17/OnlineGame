@@ -199,6 +199,7 @@ h1{
   align-items: center;
   justify-content: center;
   background-image: linear-gradient(135deg, rgb(241, 76, 11), blue);
+  overflow: hidden;
 }
 
 .home-wrapper > input{
@@ -225,4 +226,13 @@ h1{
   bottom: 0;
   right: 0;
   color: gray;
+}
+
+.infoButton{
+  background: transparent;
+  width: 15vw;
+  height: 3vh;
+  border-radius: 20px;
+  margin: 2%;
+  color: white;
 }
