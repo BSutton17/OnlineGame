@@ -9,7 +9,7 @@ import { PiMagicWandFill, PiHammerFill  } from "react-icons/pi";
 import { GiCrownedSkull, GiRaiseSkeleton  } from "react-icons/gi";
 import './HTP.css';
 
-const socket = io.connect("localhost:3001/")
+const socket = io.connect("https://overloardserver-3dcf0e3323a3.herokuapp.com/")
 
 const LoadingRoom = () => {
   const [userName, setUsername] = useState("");
