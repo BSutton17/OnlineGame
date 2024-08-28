@@ -14,6 +14,7 @@ const HowToPlay = () => {
       ) : (
         <div id="how-to-play">
           <h1>How to Play</h1>
+           <p>To join a game, enter the same room ID as your opponent</p>
           <p>
             When it is your turn, you may place up to 3 characters and/or barriers onto any gray square on your side. You will have 3 moves before your turn is over. Placing a character or moving a character will count as a move.
             <br /><br />
