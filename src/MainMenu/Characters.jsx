@@ -45,7 +45,7 @@ const Characters = () => {
       <p><strong>Ability:</strong> Repair (Passive) Any carpenter that is orthodontology adjacent to a barrier may extend it by one block in any direction as long as the block is vacant.</p>
 
       <h1>Now you know the ropes. Rally your troops, build those barriers, manage your economy and become an overlord.</h1>
-      <button onClick={() => setShowChar(false)}>How to play</button>
+      <button className="infoButton" onClick={() => setShowChar(false)}>How to play</button>
     </div>
   );
 };
