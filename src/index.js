@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import reportWebVitals from "./reportWebVitals";
 import LoadingRoom from "./MainMenu/LoadingRoom";
 import { GameProvider } from "./Context/GameContext";
+import App from "./App";
 
 ReactDOM.render(
   <GameProvider>

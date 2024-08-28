@@ -9,7 +9,7 @@ const Abilities = ({ color, handleDragStart}) => {
         <button
         className={color}
         draggable={true}
-        onDragStart={(e) => handleDragStart(e, 'Arrow')}
+        onDragStart={(e) => handleDragStart(e, 'Arrow', "Ability")}
       >
         <h1>Archer</h1>
         <h2>Arrow</h2>
@@ -17,7 +17,7 @@ const Abilities = ({ color, handleDragStart}) => {
       <button
         className={color}
         draggable={true}
-        onDragStart={(e) => handleDragStart(e, 'Sp')}
+        onDragStart={(e) => handleDragStart(e, 'Sp', "Ability")}
       >
         <h1>Archer</h1>
         <h2>Spread</h2>
@@ -25,7 +25,7 @@ const Abilities = ({ color, handleDragStart}) => {
       <button
         className={color}
         draggable={true}
-        onDragStart={(e) => handleDragStart(e, 'Pu')}
+        onDragStart={(e) => handleDragStart(e, 'Pu', "Ability")}
       >
         <h1>Priest</h1>
         <h2>Purify</h2>
@@ -33,7 +33,7 @@ const Abilities = ({ color, handleDragStart}) => {
       <button
         className={color}
         draggable={true}
-        onDragStart={(e) => handleDragStart(e, 'fireBall')}
+        onDragStart={(e) => handleDragStart(e, 'fireBall', "Ability")}
       >
         <h1>Wizard</h1>
         <h2>Explosion!</h2>
@@ -41,7 +41,7 @@ const Abilities = ({ color, handleDragStart}) => {
       <button
         className={color}
         draggable={true}
-        onDragStart={(e) => handleDragStart(e, 'Ri')}
+        onDragStart={(e) => handleDragStart(e, 'Ri', "Ability")}
       >
         <h1>Necromancer</h1>
         <h2>Rise</h2>
@@ -49,7 +49,7 @@ const Abilities = ({ color, handleDragStart}) => {
       <button
         className={color}
         draggable={true}
-        onDragStart={(e) => handleDragStart(e, 'Re')}
+        onDragStart={(e) => handleDragStart(e, 'Re', "Ability")}
       >
         <h1>Carpenter</h1>
         <h2>Repair</h2>
