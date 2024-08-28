@@ -37,3 +37,7 @@
     margin: 2%;
     color: white;
   }
+
+  input{
+    border-radius: 5px;
+  }
