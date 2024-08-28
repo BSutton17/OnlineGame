@@ -19,7 +19,7 @@ const HowToPlay = () => {
             <br /><br />
             You may not spawn a character onto a square another piece, friend or foe, is occupying. You may spawn a character and move a character on the same turn if you have enough remaining moves to do so.
             <br /><br />
-            At the end of every turn you will generate $100.
+            At the end of every turn you will generate $125.
           </p>
 
           <h1>How to Win</h1>
