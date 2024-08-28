@@ -449,14 +449,17 @@ function handleDragStart(e, character, className) {
     return false;
   } 
  
-  if (!canMove) {
-    e.preventDefault();
-    setTurn("Out of moves");
-    setTimeout(() => {
-      setTurn("");
-    }, 1500);
-    return false;
-  } 
+  if(className != "Ability"){
+    if (!canMove) {
+      e.preventDefault();
+      setTurn("Out of moves");
+      setTimeout(() => {
+        setTurn("");
+      }, 1500);
+      return false;
+    } 
+  }
+ 
 
 try{
   e.dataTransfer.setData('text/plain', character);
@@ -480,22 +483,24 @@ function handleDrop(e, id, color) {
 
   let removeMoves = false;
   switch(droppedContent) {
-    case minuteMen:
-    case archer:
-    case priest:
-    case miner:
-    case wizard:
-    case necromancer:
-    case carpenter:
+    case "Arrow":
+    case "Sp":
+    case "Pu":
+    case "fireBall":
+    case "Ri":
+    case "Re":
+    case barrier:
       removeMoves = true;
       break;
     default:
       removeMoves = false;
   }
-  if (removeMoves) {
+  
+  if (!removeMoves) {
     setMoves(prevMoves => prevMoves - 1);
     updateMoves();
   } 
+
   resetColors();
 
   const [targetI, targetJ] = id.split('-').map(Number);
