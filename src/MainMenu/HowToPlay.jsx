@@ -58,7 +58,7 @@ const HowToPlay = () => {
 
           <h1>Abilities</h1>
           <p>
-            Abilities are powerful quirks that characters can possess. Some abilities are passive, meaning they have infinite use. Other abilities are active, meaning they can only be used one time per character type.
+            Abilities are powerful quirks that characters can possess. Some abilities are passive, meaning they have infinite use. Other abilities are active, meaning they can only be used one time per character type. At least one character of the appropriate type must be on the board for an active ability to be activated.
             <br /><br />
             <strong>Note:</strong> If an ability is active, it can only be used once per side for the entire game, regardless of whether multiple of that troop are on the board or if more spawn in later.
           </p>
