@@ -545,34 +545,31 @@ function handleDrop(e, id, color) {
         }
       }else if(droppedContent === "Ri"  && (cell.props.id === id || isAboveTarget || isBelowTarget)){
         const boxClassName = dragClassRef.current === "selector-blue" ? 'box-blue' : 'box-orange';
-        return renderBoxButton(boxClassName, <GiRaiseSkeleton size={35} name="S"/>, cell.props.id, cellI, cellJ, color);
+        return determineIcon(boxClassName, "S", id, cellI, cellJ, boxClassName);
       }
 
       // Character movement and enemy detection
       if (isTargetCell) {
-        // Handle the target cell based on dropped content
+        // If the current cell is the one where the item was dropped
         if (droppedContent === 'Arrow') {
-          return renderBoxButton(className, '', cell.props.id, cellI, cellJ, color);
+          return renderBoxButton(className, '', cell.props?.id, cellI, cellJ, color);
         } else if (dragClassRef.current === 'selector-blue' || dragClassRef.current === 'selector-orange') {
           const boxClassName = dragClassRef.current === "selector-blue" ? 'box-blue' : 'box-orange';
           handleMoney(droppedContent, color);
           return determineIcon(boxClassName, droppedContent, id, cellI, cellJ, boxClassName);
         } else if (droppedContent === 'fireBall') {
-          // Leave the target cell empty and place fireballs in neighbors
-          return renderBoxButton(className, "", cell.props.id, cellI, cellJ, color);
-        } 
+          return renderBoxButton(className, cell.props?.children, cell.props?.id, cellI, cellJ, color);
+        } else {
+          return renderBoxButton(dragClassRef.current, dragCharacterRef.current, id, cellI, cellJ, color);
+        }
       } else if (droppedContent === 'fireBall' && isNeighbor) {
-        // Place a fireball in the neighboring cell
-        return renderBoxButton(className, <AiFillFire size={35} name='F'/>, cell.props.id, cellI, cellJ, color);
+        return renderBoxButton(className, <AiFillFire size={35} name='F' />, cell?.props?.id, cellI, cellJ, color);
       } else if (cellAsId === dragPositionRef.current) {
-        // Remove the character from the cell you moved from
-        return renderBoxButton(className, '', cell.props.id, cellI, cellJ, color);
-      } else if (cell.props.children !== '') {
-        // Keep all other character cells the same
+        return renderBoxButton(className, '', cell?.props?.id, cellI, cellJ, color);
+      } else if (cell?.props?.children !== '') {
         return renderBoxButton(cell.props.className, cell.props.children, cell.props.id, cellI, cellJ, color);
       } else {
-        // Default return for all other cells
-        return renderBoxButton(className, '', cell.props.id, cellI, cellJ, color, cell.props.draggable);
+        return renderBoxButton(className, '', cell?.props?.id, cellI, cellJ, color, cell?.props?.draggable);
       }
     });
   });
@@ -820,9 +817,9 @@ const priestAbility = (cell, cellI, cellJ, color, className) => {
     }
  
     if (color === 'selector-blue') {
-      setBlueMoney(prevBlueMoney => prevBlueMoney - deduction);
+      setBlueMoney(prevBlueMoney => prevBlueMoney - deduction/2);
     } else {
-      setOrangeMoney(prevOrangeMoney => prevOrangeMoney - deduction);
+      setOrangeMoney(prevOrangeMoney => prevOrangeMoney - deduction/2);
     }
 
     updateMoneyState()
