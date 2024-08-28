@@ -504,14 +504,14 @@ function handleDrop(e, id, color) {
   const [targetI, targetJ] = id.split('-').map(Number);
 
   const neighbors = [
-    [targetI - 1, targetJ],     // Top
-    [targetI + 1, targetJ],     // Bottom
-    [targetI, targetJ - 1],     // Left
-    [targetI, targetJ + 1],     // Right
-    [targetI - 1, targetJ - 1], // Top-Left
-    [targetI - 1, targetJ + 1], // Top-Right
-    [targetI + 1, targetJ - 1], // Bottom-Left
-    [targetI + 1, targetJ + 1]  // Bottom-Right
+    [targetI - 1, targetJ],    
+    [targetI + 1, targetJ],    
+    [targetI, targetJ - 1],     
+    [targetI, targetJ + 1],     
+    [targetI - 1, targetJ - 1], 
+    [targetI - 1, targetJ + 1], 
+    [targetI + 1, targetJ - 1], 
+    [targetI + 1, targetJ + 1]  
   ];
 
   setGrid((prevGrid) => {
@@ -546,9 +546,9 @@ function handleDrop(e, id, color) {
         else {
           return cell;
         }
-      }else if(droppedContent === "Ri"  && (cell.props.id === id || isAboveTarget || isBelowTarget)){
+      } else if(droppedContent === "Ri"  && (cell.props.id === id || isAboveTarget || isBelowTarget)) {
         const boxClassName = dragClassRef.current === "selector-blue" ? 'box-blue' : 'box-orange';
-        return determineIcon(boxClassName, "S", id, cellI, cellJ, boxClassName);
+        return renderBoxButton(boxClassName, <GiRaiseSkeleton size={35} name='S' />, cell.props.id, cellI, cellJ, color);
       }
 
       // Character movement and enemy detection
@@ -566,7 +566,7 @@ function handleDrop(e, id, color) {
           return renderBoxButton(dragClassRef.current, dragCharacterRef.current, id, cellI, cellJ, color);
         }
       } else if (droppedContent === 'fireBall' && isNeighbor) {
-        return renderBoxButton(className, <AiFillFire size={35} name='F' />, cell?.props?.id, cellI, cellJ, color);
+        return renderBoxButton(className, <AiFillFire size={35} name='F'/>, cell?.props?.id, cellI, cellJ, color);
       } else if (cellAsId === dragPositionRef.current) {
         return renderBoxButton(className, '', cell?.props?.id, cellI, cellJ, color);
       } else if (cell?.props?.children !== '') {
@@ -589,18 +589,18 @@ const priestAbility = (cell, cellI, cellJ, color, className) => {
 
   // Check if the cell's children have props (e.g., an icon component)
   if (!cell.props.children.props || !cell.props.children.props.name) {
-    return cell; // Return the original cell if children props are undefined
+    return cell;
   }
   try{
     switch (color) {
       case 'selector-blue':
-        if (cellJ < 10 && cell.props.className === 'box-orange' && cell.props.children.props.name === necromancer) {
+        if (cellJ < 10 && cell.props.className === 'box-orange' && (cell.props.children.props.name === necromancer || cell.props.children.props.name === "S")) {
           return renderBoxButton(className, '', cell.props.id, cellI, cellJ, color, false);
         } else {
           return cell;
         }
       default:
-        if (cellJ >= 10 && cell.props.className === 'box-blue' && cell.props.children.props.name === necromancer) {
+        if (cellJ >= 10 && cell.props.className === 'box-blue' && (cell.props.children.props.name === necromancer || cell.props.children.props.name === "S")) {
           return renderBoxButton(className, '', cell.props.id, cellI, cellJ, color, false);
         } else {
           return cell;
