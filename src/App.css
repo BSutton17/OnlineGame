@@ -101,7 +101,7 @@ h1{
   margin-top: 1em;
 }
 
-.selector-blue, .selector-orange, #change {
+.selector-blue, .selector-orange, .change {
   color: white;
   height: 15vh;
   width: 10em;
@@ -109,7 +109,8 @@ h1{
   border: 1px solid gray;
 }
 
-#change {
+.change {
+  width: 8em;
   margin-left: 1%;
 }
 
@@ -207,7 +208,7 @@ h1{
 }
 
 .home-wrapper > h1{
-  font-size: 12vh;
+  font-size: 14vh;
   margin-bottom: -2.5vh;
 }
 .home-wrapper{

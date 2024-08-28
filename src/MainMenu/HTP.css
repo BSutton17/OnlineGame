@@ -1,0 +1,32 @@
+#how-to-play {
+    padding: 5% 1%;
+    height: 100%;
+    width: 98%;
+    background-image: linear-gradient(135deg, rgb(241, 76, 11) 60%, blue );
+    margin-top: 50vh;
+    margin-right: 15vw;
+  }
+  
+  #characters{
+    padding: 10% 2%;
+    height: 140%;
+    width: 99%;
+    background-image: linear-gradient(135deg, rgb(241, 76, 11) 50%, blue );
+    margin-top: 80vh;
+    margin-right: 25vw;
+  }
+  #how-to-play > h1,  #characters > h1 {
+    font-size: 200%;
+  }
+  
+  #how-to-play > p,  #characters > p {
+    font-size: 120%;
+  }
+
+  #characters > p {
+    margin-top: -0.6%;
+  }
+  #characters > h2{
+    font-size: 160%;
+  }
+  

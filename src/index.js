@@ -2,12 +2,15 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import LoadingRoom from "./LoadingRoom";
+import LoadingRoom from "./MainMenu/LoadingRoom";
+import { GameProvider } from "./Context/GameContext";
 
 ReactDOM.render(
+  <GameProvider>
   <React.StrictMode>
     <LoadingRoom />
-  </React.StrictMode>,
+  </React.StrictMode>
+  </GameProvider>,
   document.getElementById("root")
 );
 
