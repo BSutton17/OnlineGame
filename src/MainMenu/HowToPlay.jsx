@@ -63,8 +63,8 @@ const HowToPlay = () => {
             <strong>Note:</strong> If an ability is active, it can only be used once per side for the entire game, regardless of whether multiple of that troop are on the board or if more spawn in later.
           </p>
 
-          <button onClick={() => setShowChar(true)}>View Characters</button>
-          <button onClick={() => {
+          <button  className="infoButton" onClick={() => setShowChar(true)}>View Characters</button>
+          <button  className="infoButton" onClick={() => {
             setJoinedRoom(true)
             setShowRules(false)
           }}>Back</button>
