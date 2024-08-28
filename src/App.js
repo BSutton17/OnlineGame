@@ -820,9 +820,9 @@ const priestAbility = (cell, cellI, cellJ, color, className) => {
     }
  
     if (color === 'selector-blue') {
-      setBlueMoney(prevBlueMoney => prevBlueMoney - deduction/2);
+      setBlueMoney(prevBlueMoney => prevBlueMoney - deduction);
     } else {
-      setOrangeMoney(prevOrangeMoney => prevOrangeMoney - deduction/2);
+      setOrangeMoney(prevOrangeMoney => prevOrangeMoney - deduction);
     }
 
     updateMoneyState()
