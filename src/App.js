@@ -16,8 +16,6 @@ function App({ socket, username, room }) {
   const [orangeMoney, setOrangeMoney] = useState(600)
   const [turn, setTurn] = useState("") //A string for the top of the page
   const [moves, setMoves] = useState(3)//Tracks moves
-  const [blueUser, setBlueUser] = useState("")//blue sides userName
-  const [orangeUser, setOrangeUser] = useState("")//orange sides userName
   const [userSide, setUserSide] = useState()
   const [blueDeaths, setBlueDeaths] = useState(0)
   const [orangeDeaths, setOrangeDeaths] = useState(0)
@@ -29,7 +27,7 @@ function App({ socket, username, room }) {
   const dragCharacterRef = useRef(null);
   const beforeChangeRef = useRef(null)
 
-  const { showBelowInv, setShowBelowInv, setLoadRoom  } = useGameContext(); 
+  const { showBelowInv, setShowBelowInv, setLoadRoom,blueUser, setBlueUser,  orangeUser, setOrangeUser} = useGameContext(); 
 
   useEffect(() => {
     if (moves <= 0) {
