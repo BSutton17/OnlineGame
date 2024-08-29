@@ -14,12 +14,13 @@ const HowToPlay = () => {
       ) : (
         <div id="how-to-play">
           <h1>How to Play</h1>
+           <p>To join a game, enter the same room ID as your opponent</p>
           <p>
             When it is your turn, you may place up to 3 characters and/or barriers onto any gray square on your side. You will have 3 moves before your turn is over. Placing a character or moving a character will count as a move.
             <br /><br />
             You may not spawn a character onto a square another piece, friend or foe, is occupying. You may spawn a character and move a character on the same turn if you have enough remaining moves to do so.
             <br /><br />
-            At the end of every turn you will generate $100.
+            At the end of every turn you will generate $125.
           </p>
 
           <h1>How to Win</h1>
@@ -58,7 +59,11 @@ const HowToPlay = () => {
 
           <h1>Abilities</h1>
           <p>
-            Abilities are powerful quirks that characters can possess. Some abilities are passive, meaning they have infinite use. Other abilities are active, meaning they can only be used one time per character type.
+            Abilities are powerful quirks that characters can possess. Some abilities are passive, meaning they have infinite use. Other abilities are active, meaning they can only be used one time per character type. 
+            <br /><br />
+            At least one character of the appropriate type must be on the board for an active ability to be activated.
+            <br /><br />
+            You cannot use an ability the same turn that a character is spawned in.
             <br /><br />
             <strong>Note:</strong> If an ability is active, it can only be used once per side for the entire game, regardless of whether multiple of that troop are on the board or if more spawn in later.
           </p>

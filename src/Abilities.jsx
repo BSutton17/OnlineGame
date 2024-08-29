@@ -11,8 +11,8 @@ const Abilities = ({ color, handleDragStart}) => {
         draggable={true}
         onDragStart={(e) => handleDragStart(e, 'Arrow', "Ability")}
       >
-        <h1>Archer</h1>
-        <h2>Arrow</h2>
+        <h1>Archer/Wizard</h1>
+        <h2>Arrow/Spell</h2>
       </button>
       <button
         className={color}
