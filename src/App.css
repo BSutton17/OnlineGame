@@ -36,14 +36,15 @@ h1{
 }
 
 #board-box {
+  margin-top: 1.5vh;
   display: grid;
-  grid-template-columns: repeat(20, 3.5em);
-  grid-template-rows: repeat(9, 3.5em);  
+  grid-template-columns: repeat(14, 4em);
+  grid-template-rows: repeat(9, 4em);  
 }
 
 .box-white, .box-orange, .box-blue, .box-green, .box-purple, .box-dark-green, .box-red {
-  height: 4.2em;
-  width: 4.2em;
+  height: 4.8em;
+  width: 4.8em;
 }
 
 .box-green {
@@ -152,6 +153,7 @@ h1{
   position: relative;
   height: 40vh;
   width: 9em;
+  margin: 0 2vw;
 }
 
 #Ability {
@@ -185,7 +187,7 @@ h1{
   font-size: 2rem;
 }
 
-#turn{
+.turn{
   position: fixed;
   top: 0;
   color: white;
