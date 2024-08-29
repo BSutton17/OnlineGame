@@ -29,7 +29,7 @@ function App({ socket, username, room }) {
   const dragCharacterRef = useRef(null);
   const beforeChangeRef = useRef(null)
 
-  const { showBelowInv, setShowBelowInv  } = useGameContext(); 
+  const { showBelowInv, setShowBelowInv, setLoadRoom  } = useGameContext(); 
 
   useEffect(() => {
     if (moves <= 0) {
@@ -44,6 +44,8 @@ function App({ socket, username, room }) {
         setBlueUser(blueUser + "'s");
         setOrangeUser(orangeUser + "'s");
         setUserSide(username == blueUser ? blueUser : orangeUser)
+        if( blueUser !== "" && orangeUser !== ""){
+          setLoadRoom(true);
     });
 
     socket.on('roomFull', () => {
