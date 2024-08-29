@@ -6,7 +6,7 @@ import { PiMagicWandFill,PiHammerFill, PiArrowFatLinesLeftFill  } from "react-ic
 import { GiCrownedSkull, GiRaiseSkeleton  } from "react-icons/gi";
 import Inventory from './Inventory';
 import Abilities from './Abilities';
-import { GameProvider, useGameContext } from './Context/GameContext';
+import { useGameContext } from './Context/GameContext';
 
 function App({ socket, username, room }) {
   const [grid, setGrid] = useState([]); //stores the grid array
@@ -17,8 +17,6 @@ function App({ socket, username, room }) {
   const [turn, setTurn] = useState("") //A string for the top of the page
   const [moves, setMoves] = useState(3)//Tracks moves
   const [userSide, setUserSide] = useState()
-  const [blueDeaths, setBlueDeaths] = useState(0)
-  const [orangeDeaths, setOrangeDeaths] = useState(0)
   
   const [canMove, setCanMove] = useState(true);
 
@@ -72,7 +70,7 @@ function App({ socket, username, room }) {
    const barrier = 'B'
 
    useEffect(() => {
-    setGrid(createGrid(20, color))
+    setGrid(createGrid(14, color))
       // Listening for the 'testEmit' event from the server
   },[])
 
@@ -304,10 +302,17 @@ const iconName = e.target.getAttribute('name');
     return;
   }
 
+  if(dragCharacterRef.current == "Arrow" && iconName == "MM"){
+    return;
+  }
+
+  if(dragCharacterRef.current == "fireBall" && iconName !== wizard){
+    return
+  }
   //allow barriers
   if((dragCharacterRef.current == barrier || dragCharacterRef.current == "Sp" ||
       dragCharacterRef.current == "Re" || dragCharacterRef.current == "fireBall" || dragCharacterRef.current == "Ri" ||
-      dragCharacterRef.current == "Pu" || dragCharacterRef.current == "S"
+      dragCharacterRef.current == "Pu" || dragCharacterRef.current == "S" || dragCharacterRef.current == "Arrow"
   )  && iconName === null){
     e.preventDefault()
   }
@@ -372,7 +377,7 @@ const iconName = e.target.getAttribute('name');
       case "C":
         return renderBoxButton(boxClassName, <PiHammerFill size={35} name='C'/>, id, cellI, cellJ, color)
       case "fireBall":
-        return renderBoxButton(boxClassName, <AiFillFire size={35} name='fireBall'/>, id, cellI, cellJ, color)
+        return renderBoxButton(boxClassName, <PiMagicWandFill size={35} name='W'/>, id, cellI, cellJ, color)
       case "S":
         return renderBoxButton(boxClassName, <GiRaiseSkeleton size={35} name='S'/>, id, cellI, cellJ, color)
       default:
@@ -386,7 +391,6 @@ const renderBoxButton = (className, content, id, cellI, cellJ, color) => {
   if (content === '' || content === "B") {
     drag = false;
   }
-
   return (
     <button
       className={className}
@@ -426,7 +430,6 @@ function canAffordCharacter(character, color) {
 }
 
 function handleDragStart(e, character, className) {
-  console.log("blueDeaths: " + blueDeaths + " orangeDeaths: " + orangeDeaths)
   // blue/orange User have an 's after for the UI so add it here
   //if it is blue's turn, don't let orange go and vice versa
   if((!side && (userSide + "'s" == blueUser || className == 'box-blue')) || (side && (userSide+"'s" == orangeUser || className == 'box-orange'))){
@@ -473,14 +476,13 @@ function handleDrop(e, id, color) {
   const droppedContent = e.dataTransfer.getData('text/plain');
   console.log(droppedContent);
 
-  let removeMoves = false;
+  let removeMoves = true;
   switch(droppedContent) {
     case "Arrow":
     case "Sp":
     case "Pu":
     case "fireBall":
     case "Ri":
-    case "Re":
     case "MM":
     case 'A':
     case "P":
@@ -488,14 +490,14 @@ function handleDrop(e, id, color) {
     case "W":
     case "N":
     case "C":
-      removeMoves = true;
+      removeMoves = false;
       break;
     default:
-      removeMoves = false;
+      removeMoves = true;
   }
   
   let copyMoves;
-  if (!removeMoves) {
+  if (removeMoves) {
     setMoves((prevMoves) => {
       copyMoves = prevMoves - 1
       console.log(copyMoves)
@@ -574,13 +576,15 @@ function handleDrop(e, id, color) {
           const boxClassName = dragClassRef.current === "selector-blue" ? 'box-blue' : 'box-orange';
           handleMoney(droppedContent, color);
           return determineIcon(boxClassName, droppedContent, id, cellI, cellJ, boxClassName);
-        } else if (droppedContent === 'fireBall') {
-          return renderBoxButton(className, cell.props?.children, cell.props?.id, cellI, cellJ, color);
-        } else {
+        } 
+        // else if (droppedContent === 'fireBall') {
+        //   return renderBoxButton(className, "", cell.props?.id, cellI, cellJ, color);
+        // } 
+        else {
           return renderBoxButton(dragClassRef.current, dragCharacterRef.current, id, cellI, cellJ, color);
         }
-      } else if (droppedContent === 'fireBall' && isNeighbor) {
-        return renderBoxButton(className, <AiFillFire size={35} name='F'/>, cell?.props?.id, cellI, cellJ, color);
+      } else if (droppedContent === 'fireBall' && isNeighbor ) {
+        return renderBoxButton(className, <AiFillFire size={35} name='F' />, cell.props.id, cellI, cellJ, color);
       } else if (cellAsId === dragPositionRef.current) {
         return renderBoxButton(className, '', cell?.props?.id, cellI, cellJ, color);
       } else if (cell?.props?.children !== '') {
@@ -834,9 +838,9 @@ const priestAbility = (cell, cellI, cellJ, color, className) => {
     }
  
     if (color === 'selector-blue') {
-      setBlueMoney(prevBlueMoney => prevBlueMoney - deduction);
+      setBlueMoney(prevBlueMoney => prevBlueMoney - deduction/2);
     } else {
-      setOrangeMoney(prevOrangeMoney => prevOrangeMoney - deduction);
+      setOrangeMoney(prevOrangeMoney => prevOrangeMoney - deduction/2);
     }
 
     updateMoneyState()
@@ -850,13 +854,13 @@ const priestAbility = (cell, cellI, cellJ, color, className) => {
      return className
     }  else {
       if (i % 2 === 0) {
-        className = j % 2 === 0 ? (j < 5 || j > 14) ? 'box-grey' : 'box-white' : (j > 20 / 2 - 1 ? 'box-orange' : 'box-blue');
+        className = j % 2 === 0 ? (j < 3 || j > 10) ? 'box-grey' : 'box-white' : (j > 14 / 2 - 1 ? 'box-orange' : 'box-blue');
       } else {
-        className = j % 2 === 1 ? (j < 5 || j > 14) ? 'box-grey' : 'box-white' : (j > 20 / 2 - 1 ? 'box-orange' : 'box-blue');
+        className = j % 2 === 1 ? (j < 3 || j > 10) ? 'box-grey' : 'box-white' : (j > 14 / 2 - 1 ? 'box-orange' : 'box-blue');
       }
       if (j === 0) {
         className = 'box-purple';
-      } else if (j === 19) {
+      } else if (j === 13) {
         className = 'box-red';
       }
     }
@@ -881,8 +885,8 @@ const priestAbility = (cell, cellI, cellJ, color, className) => {
       ): (
         <div id="Outer-Container">
           <h3 id="room">{`room id: ${room}`}</h3>
-          <h1 id='turn'>{turn}</h1>
-          <h1 id='turn'>{removeMoves(turn)}</h1>
+          <h1 className='turn'>{turn}</h1>
+          <h1 className='turn'>{removeMoves(turn)}</h1>
           <div id="above-inventory">
             <div id="moneyLeft">
               <h1 className = "cash-Title">{blueUser} Cash:</h1>
