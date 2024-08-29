@@ -314,7 +314,7 @@ const iconName = e.target.getAttribute('name');
   }
 
   //only move to green sqaures (unless it is an enemy sqaure)
-   if((!isFromInv && (e.target.className == 'box-green' || e.target.className == 'box-dark-green')) || iconName != null){
+   if((!isFromInv && (e.target.className == 'box-green' || e.target.className == 'box-dark-green' || e.target.className == 'box-black')) || iconName != null){
     e.preventDefault();
   }
 };
