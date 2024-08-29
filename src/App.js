@@ -45,6 +45,7 @@ function App({ socket, username, room }) {
     setOrangeUser(orangeUser + "'s");
     setUserSide(username === blueUser ? blueUser : orangeUser);
 
+    console.log(blueUser + orangeUser);
     if (blueUser !== "" && orangeUser !== "") {
       setLoadRoom(true);
     }
