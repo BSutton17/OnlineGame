@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import './App.css';
 import { AiFillFire } from "react-icons/ai";
 import { TbBow, TbSwords, TbCross, TbShovel  } from "react-icons/tb";
-import { PiMagicWandFill,PiHammerFill, PiArrowFatLinesLeftFill  } from "react-icons/pi";
+import { PiMagicWandFill,PiHammerFill  } from "react-icons/pi";
 import { GiCrownedSkull, GiRaiseSkeleton  } from "react-icons/gi";
 import Inventory from './Inventory';
 import Abilities from './Abilities';
@@ -19,6 +19,7 @@ function App({ socket, username, room }) {
   const [userSide, setUserSide] = useState()
   const [blueDeaths, setBlueDeaths] = useState(0)
   const [orangeDeaths, setOrangeDeaths] = useState(0)
+  
   const [canMove, setCanMove] = useState(true);
 
   const dragPositionRef = useRef(null); // Ref to store position of dragged cell
@@ -26,7 +27,7 @@ function App({ socket, username, room }) {
   const dragCharacterRef = useRef(null);
   const beforeChangeRef = useRef(null)
 
-  const { showBelowInv, setShowBelowInv, setLoadRoom,blueUser, setBlueUser,  orangeUser, setOrangeUser} = useGameContext(); 
+  const { showBelowInv, setShowBelowInv,blueUser, setBlueUser,orangeUser, setOrangeUser  } = useGameContext(); 
 
   useEffect(() => {
     if (moves <= 0) {
@@ -36,23 +37,20 @@ function App({ socket, username, room }) {
     }
   }, [grid]);
 
- useEffect(() => {
-  socket.on('assignRoles', ({ blueUser, orangeUser }) => {
-    setBlueUser(blueUser + "'s");
-    setOrangeUser(orangeUser + "'s");
-    setUserSide(username === blueUser ? blueUser : orangeUser);
+  useEffect(() => {
+      socket.on('assignRoles', ({ blueUser, orangeUser }) => {
+        setBlueUser(blueUser + "'s");
+        setOrangeUser(orangeUser + "'s");
+        setUserSide(username == blueUser ? blueUser : orangeUser)
+    });
 
-  socket.on('roomFull', () => {
-    console.log('full');
-  });
+    socket.on('roomFull', () => {
+        console.log('full')
+    });
 
- 
-  return () => {
-    socket.off('assignRoles');
-    socket.off('roomFull');
-  };
-}, []); 
-
+  // Cleanup on component unmount
+  return () => socket.disconnect();
+}, []);
 
    // Define characters
    const minuteMen = "MM";
@@ -314,7 +312,7 @@ const iconName = e.target.getAttribute('name');
   }
 
   //only move to green sqaures (unless it is an enemy sqaure)
-   if((!isFromInv && (e.target.className == 'box-green' || e.target.className == 'box-dark-green' || e.target.className == 'box-black')) || iconName != null){
+   if((!isFromInv && (e.target.className == 'box-green' || e.target.className == 'box-dark-green')) || iconName != null){
     e.preventDefault();
   }
 };
@@ -827,9 +825,9 @@ const priestAbility = (cell, cellI, cellJ, color, className) => {
     }
  
     if (color === 'selector-blue') {
-      setBlueMoney(prevBlueMoney => prevBlueMoney - deduction);
+      setBlueMoney(prevBlueMoney => prevBlueMoney - deduction/2);
     } else {
-      setOrangeMoney(prevOrangeMoney => prevOrangeMoney - deduction);
+      setOrangeMoney(prevOrangeMoney => prevOrangeMoney - deduction/2);
     }
 
     updateMoneyState()
