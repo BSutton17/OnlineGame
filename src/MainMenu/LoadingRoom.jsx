@@ -60,9 +60,9 @@ const LoadingRoom = () => {
           </div>
         </div>
       ) 
-        : !loadRoom ? (
-        <div>Waiting for Opponent...</div>
-      ) 
+      //   : !loadRoom ? (
+      //   <div>Waiting for Opponent...</div>
+      // ) 
         : (
         <App socket={socket} username={userName} room={room} />
       ) }
