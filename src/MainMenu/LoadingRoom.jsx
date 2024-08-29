@@ -27,7 +27,6 @@ const LoadingRoom = () => {
     if (blueUser !== "" && orangeUser !== "") {
       setLoadRoom(true);
     }
-  });
   };
 
   return (
