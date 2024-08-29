@@ -19,7 +19,6 @@ function App({ socket, username, room }) {
   const [userSide, setUserSide] = useState()
   const [blueDeaths, setBlueDeaths] = useState(0)
   const [orangeDeaths, setOrangeDeaths] = useState(0)
-  
   const [canMove, setCanMove] = useState(true);
 
   const dragPositionRef = useRef(null); // Ref to store position of dragged cell
@@ -42,12 +41,6 @@ function App({ socket, username, room }) {
     setBlueUser(blueUser + "'s");
     setOrangeUser(orangeUser + "'s");
     setUserSide(username === blueUser ? blueUser : orangeUser);
-
-    console.log(blueUser + orangeUser);
-    if (blueUser !== "" && orangeUser !== "") {
-      setLoadRoom(true);
-    }
-  });
 
   socket.on('roomFull', () => {
     console.log('full');
