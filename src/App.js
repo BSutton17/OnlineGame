@@ -226,12 +226,12 @@ const sendGridUpdate = () => {
 
   const setNewColor = () => {
     if (!side) {
-        setOrangeMoney(prevOrangeMoney => prevOrangeMoney + 125);
+        setOrangeMoney(prevOrangeMoney => prevOrangeMoney + 75);
         setColor("selector-blue");
         setTurn("Blue's Turn");
         setMoves(3);
     } else {
-        setBlueMoney(prevBlueMoney => prevBlueMoney + 125);
+        setBlueMoney(prevBlueMoney => prevBlueMoney + 75);
         setColor("selector-orange");
         setTurn("Orange's Turn");
         setMoves(3);
@@ -838,9 +838,9 @@ const priestAbility = (cell, cellI, cellJ, color, className) => {
     }
  
     if (color === 'selector-blue') {
-      setBlueMoney(prevBlueMoney => prevBlueMoney - deduction/2);
+      setBlueMoney(prevBlueMoney => prevBlueMoney - deduction);
     } else {
-      setOrangeMoney(prevOrangeMoney => prevOrangeMoney - deduction/2);
+      setOrangeMoney(prevOrangeMoney => prevOrangeMoney - deduction);
     }
 
     updateMoneyState()
