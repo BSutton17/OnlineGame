@@ -874,8 +874,10 @@ const priestAbility = (cell, cellI, cellJ, color, className) => {
     return (
       <>
       { !loadRoom ? (
-        <div className="Waiting-Room">Waiting for Opponent...</div>
-        <h3 id="room">{`room id: ${room}`}</h3>
+        <>
+          <div className="Waiting-Room">Waiting for Opponent...</div>
+          <h3 id="room">{`room id: ${room}`}</h3>
+        </>
       ): (
         <div id="Outer-Container">
           <h3 id="room">{`room id: ${room}`}</h3>
