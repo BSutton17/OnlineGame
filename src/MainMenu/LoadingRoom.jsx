@@ -23,6 +23,11 @@ const LoadingRoom = () => {
       setJoinedRoom(false);
       console.log("User joined room: " + joinedRoom);
     }
+    console.log(blueUser + orangeUser);
+    if (blueUser !== "" && orangeUser !== "") {
+      setLoadRoom(true);
+    }
+  });
   };
 
   return (
@@ -56,9 +61,9 @@ const LoadingRoom = () => {
           </div>
         </div>
       ) 
-      //   : !loadRoom ? (
-      //   <div>Waiting for Opponent...</div>
-      // ) 
+        : !loadRoom ? (
+        <div>Waiting for Opponent...</div>
+      ) 
         : (
         <App socket={socket} username={userName} room={room} />
       ) }
