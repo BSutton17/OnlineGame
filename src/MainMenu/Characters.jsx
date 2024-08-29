@@ -14,7 +14,7 @@ const Characters = () => {
       <h2>MinuteMen <TbSwords /></h2>
       <p>The most basic and reliable troop, weak alone but mighty in numbers!</p>
       <p><strong>Range:</strong> Melee</p>
-      <p><strong>Ability:</strong> None</p>
+      <p><strong>Ability:</strong> Shield (Passive) MinuteMen cannot be harmed by spells or arrows</p>
 
       <h2>Archers <TbBow /></h2>
       <p>Strong and determined, archers are great at supporting allies from afar.</p>
