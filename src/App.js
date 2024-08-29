@@ -39,22 +39,28 @@ function App({ socket, username, room }) {
     }
   }, [grid]);
 
-  useEffect(() => {
-      socket.on('assignRoles', ({ blueUser, orangeUser }) => {
-        setBlueUser(blueUser + "'s");
-        setOrangeUser(orangeUser + "'s");
-        setUserSide(username == blueUser ? blueUser : orangeUser)
-        if( blueUser !== "" && orangeUser !== ""){
-          setLoadRoom(true);
-    });
+ useEffect(() => {
+  socket.on('assignRoles', ({ blueUser, orangeUser }) => {
+    setBlueUser(blueUser + "'s");
+    setOrangeUser(orangeUser + "'s");
+    setUserSide(username === blueUser ? blueUser : orangeUser);
 
-    socket.on('roomFull', () => {
-        console.log('full')
-    });
+    if (blueUser !== "" && orangeUser !== "") {
+      setLoadRoom(true);
+    }
+  });
 
-  // Cleanup on component unmount
-  return () => socket.disconnect();
-}, []);
+  socket.on('roomFull', () => {
+    console.log('full');
+  });
+
+ 
+  return () => {
+    socket.off('assignRoles');
+    socket.off('roomFull');
+  };
+}, []); 
+
 
    // Define characters
    const minuteMen = "MM";
