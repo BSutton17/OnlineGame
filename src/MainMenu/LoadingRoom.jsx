@@ -15,7 +15,7 @@ const LoadingRoom = () => {
   const [userName, setUsername] = useState("");
   const [room, setRoom] = useState("");
   
-  const { joinedRoom, setJoinedRoom, showRules, setShowRules, loadRoom } = useGameContext(); 
+  const { joinedRoom, setJoinedRoom, showRules, setShowRules, loadRoom, blueUser, setBlueUser, orangeUser, setOrangeUser } = useGameContext(); 
 
   const joinRoom = () => {
     if (userName !== "" && room !== "") {
