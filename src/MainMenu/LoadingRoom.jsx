@@ -15,7 +15,7 @@ const LoadingRoom = () => {
   const [userName, setUsername] = useState("");
   const [room, setRoom] = useState("");
   
-  const { joinedRoom, setJoinedRoom, showRules, setShowRules } = useGameContext(); 
+  const { joinedRoom, setJoinedRoom, showRules, setShowRules, loadRoom } = useGameContext(); 
 
   const joinRoom = () => {
     if (userName !== "" && room !== "") {
@@ -55,9 +55,11 @@ const LoadingRoom = () => {
             <button className="infoButton" onClick={() => setShowRules(true)}>How To Play</button>
           </div>
         </div>
+      ) : !loadRoom ? (
+        <div>Waiting for Opponent...</div>
       ) : (
         <App socket={socket} username={userName} room={room} />
-      )}
+      ) }
     </>
   );
 };
