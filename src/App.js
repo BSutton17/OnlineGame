@@ -33,7 +33,7 @@ function App({ socket, username, room }) {
     } else {
       setCanMove(true);
     }
-  }, [grid]);
+  }, [grid, moves, turn]);
 
  useEffect(() => {
   socket.on('assignRoles', ({ blueUser, orangeUser }) => {
