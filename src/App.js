@@ -832,7 +832,7 @@ const priestAbility = (cell, cellI, cellJ, color, className) => {
       case carpenter:
         deduction = 150;
         break;
-      case barrier:
+      case "B":
         deduction = 100;
         break;
       default:
