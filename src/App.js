@@ -546,6 +546,7 @@ function handleDrop(e, id, color) {
       if (droppedContent === 'Pu') {
         return priestAbility(cell, cellI, cellJ, color, className);
       } else if (droppedContent === 'B' && (cell.props.id === id || isAboveTarget)) {
+        handleMoney(barrier, color);
         return renderBoxButton('box-black', 'B', cell.props.id, cellI, cellJ, color);
       } else if (droppedContent === "Sp"  && (cell.props.id === id || isAboveTarget || isBelowTarget)) {
         return renderBoxButton(className, '', cell.props.id, cellI, cellJ, color);
@@ -832,7 +833,7 @@ const priestAbility = (cell, cellI, cellJ, color, className) => {
       case carpenter:
         deduction = 150;
         break;
-      case "B":
+      case barrier:
         deduction = 100;
         break;
       default:
