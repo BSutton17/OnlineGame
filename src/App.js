@@ -41,7 +41,6 @@ function App({ socket, username, room }) {
     setOrangeUser(orangeUser + "'s");
     setUserSide(username === blueUser ? blueUser : orangeUser);
 
-    console.log(blueUser + orangeUser);
     if (blueUser !== "" && orangeUser !== "") {
       setLoadRoom(true);
     }
@@ -71,7 +70,6 @@ function App({ socket, username, room }) {
 
    useEffect(() => {
     setGrid(createGrid(14, color))
-      // Listening for the 'testEmit' event from the server
   },[])
 
   //send new side to clients
@@ -126,7 +124,6 @@ useEffect(() => {
       }));
     });
  
-  //  resetColors()
     // Cleanup on component unmount
     return () => {
       socket.off('receiveGridUpdated');
@@ -140,7 +137,6 @@ useEffect(() => {
       setOrangeMoney(newPrice[1])
     });
 
-    // Cleanup on component unmount
     return () => {
       socket.off('receiveMoneyUpdated');
     };
@@ -154,8 +150,8 @@ useEffect(() => {
 const updateMoneyState = () => {
   setBlueMoney((prevBlueMoney) => {
     setOrangeMoney((prevOrangeMoney) => {
-      const updatedBlueMoney = prevBlueMoney; // or apply any logic if you need to
-      const updatedOrangeMoney = prevOrangeMoney; // or apply any logic if you need to
+      const updatedBlueMoney = prevBlueMoney; 
+      const updatedOrangeMoney = prevOrangeMoney; 
       socket.emit("sendMoneyUpdate", [updatedBlueMoney, updatedOrangeMoney], room);
       return prevOrangeMoney;
     });
@@ -274,9 +270,8 @@ const sendGridUpdate = () => {
     }
     return array;
   };
- 
-  // Allow drop event
- // Allow drop event
+
+ // e.preventDefault() = Allow drop event
 const handleDragOver = (e, className) => {
 // Determine if the dragged item is from the inventory
 const isFromInv = dragClassRef.current === "selector-blue" || dragClassRef.current === "selector-orange";
@@ -474,7 +469,6 @@ function handleDragStart(e, character, className) {
 // Updated handleDrop function to prevent dropping if the player can't afford the character
 function handleDrop(e, id, color) {
   const droppedContent = e.dataTransfer.getData('text/plain');
-  console.log(droppedContent);
 
   let removeMoves = true;
   switch(droppedContent) {
@@ -497,10 +491,10 @@ function handleDrop(e, id, color) {
   }
   
   let copyMoves;
+  //moves updated asynchronously so keep track of it in a method that is called later
   if (removeMoves) {
     setMoves((prevMoves) => {
       copyMoves = prevMoves - 1
-      console.log(copyMoves)
       return prevMoves - 1
     }); 
     updateMoves();
@@ -600,10 +594,10 @@ function handleDrop(e, id, color) {
   resetColors();
 }
 
-
+ // Return the original cell if it's empty
 const priestAbility = (cell, cellI, cellJ, color, className) => {
   if (!cell || !cell.props || !cell.props.children) {
-    return cell; // Return the original cell if it's undefined or has no children
+    return cell;
   }
 
   // Check if the cell's children have props (e.g., an icon component)
@@ -727,7 +721,7 @@ const priestAbility = (cell, cellI, cellJ, color, className) => {
               break;
           }
         }
-        //if it is a conditino cell, and it is empty, make it green
+        //if it is a condition cell, and it is empty, make it green
         if (condition && cell.props.children == '' && cell.props.className != 'box-black' && cell.props.children != character) {
           return renderBoxButton("box-green", cell.props.children, cell.props.id, cellI, cellJ, color)
         }
