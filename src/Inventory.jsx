@@ -40,7 +40,7 @@ const Inventory = ({ color, handleDragStart, setNewColor, updateSideState }) => 
         onDragStart={(e) => handleDragStart(e, 'M')}
       >
         <h1>Miner</h1>
-        <h2>$150</h2>
+        <h2>$200</h2>
       </button>
       <button
         className={color}
