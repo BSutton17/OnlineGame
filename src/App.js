@@ -227,7 +227,7 @@ const sendGridUpdate = () => {
         setTurn("Blue's Turn");
         setMoves(3);
     } else {
-        setBlueMoney(prevBlueMoney => prevBlueMoney + 75);
+        setBlueMoney(prevBlueMoney => prevBlueMoney + 100);
         setColor("selector-orange");
         setTurn("Orange's Turn");
         setMoves(3);
@@ -816,7 +816,7 @@ const priestAbility = (cell, cellI, cellJ, color, className) => {
         deduction = 300;
         break;
       case miner:
-        deduction = 150;
+        deduction = 200;
         break;
       case wizard:
         deduction = 200;
