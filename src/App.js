@@ -222,7 +222,7 @@ const sendGridUpdate = () => {
 
   const setNewColor = () => {
     if (!side) {
-        setOrangeMoney(prevOrangeMoney => prevOrangeMoney + 75);
+        setOrangeMoney(prevOrangeMoney => prevOrangeMoney + 100);
         setColor("selector-blue");
         setTurn("Blue's Turn");
         setMoves(3);
@@ -408,7 +408,7 @@ function getCharacterCost(character) {
     case 'MM': return 50;
     case 'A': return 100;
     case 'P': return 300;
-    case 'M': return 150;
+    case 'M': return 200;
     case 'W': return 200;
     case 'N': return 250;
     case 'C': return 150;
