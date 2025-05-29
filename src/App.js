@@ -312,16 +312,16 @@ const iconName = e.target.getAttribute('name');
     e.preventDefault()
   }
 
-  if(iconName !== null){
+  if(canMove && iconName !== null){
     e.preventDefault();
   }
   // Allow drop if the item is from the inventory and the target is a grey box
-  if (isFromInv && e.target.className === "box-grey") {
+  if (canMove &&  isFromInv && e.target.className === "box-grey") {
     e.preventDefault();
   }
 
   //only move to green sqaures (unless it is an enemy sqaure)
-   if((!isFromInv && (e.target.className == 'box-green' || e.target.className == 'box-dark-green' || e.target.className == 'box-black')) || iconName != null){
+   if(canMove && (!isFromInv && (e.target.className == 'box-green' || e.target.className == 'box-dark-green' || e.target.className == 'box-black')) || iconName != null){
     e.preventDefault();
   }
 };
