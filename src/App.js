@@ -66,7 +66,8 @@ function App({ socket, username, room }) {
    const wizard = "W";
    const necromancer = "N";
    const carpenter = "C";
-   const barrier = 'B'
+   const barrier = 'B';
+   let copyMoves = moves;
 
    useEffect(() => {
     setGrid(createGrid(14, color))
@@ -490,13 +491,11 @@ function handleDrop(e, id, color) {
       removeMoves = true;
   }
   
-  let copyMoves;
+  copyMoves = copyMoves;
   //moves updated asynchronously so keep track of it in a method that is called later
   if (removeMoves) {
-    setMoves((prevMoves) => {
-      copyMoves = prevMoves - 1
-      return prevMoves - 1
-    }); 
+    copyMoves = copyMoves - 1
+    setMoves(copyMoves); 
     updateMoves();
   } 
 
