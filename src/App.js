@@ -499,7 +499,7 @@ function handleDrop(e, id, color) {
     updateMoves();
   } 
 
-  if(copyMoves < 0 && !removeMoves){
+  if(copyMoves < 0 && removeMoves){
     resetColors()
     setTurn("Out of moves");
       setTimeout(() => {
