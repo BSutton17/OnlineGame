@@ -9,104 +9,100 @@ import Abilities from './Abilities';
 import { useGameContext } from './Context/GameContext';
 
 function App({ socket, username, room }) {
-  const [grid, setGrid] = useState([]); //stores the grid array
-  const [color, setColor] = useState("selector-blue"); //tracks the color of the inv
-  const [side, setSide] = useState(true) //a boolean tracker for if statements. True == blue. False == orange
-  const [blueMoney, setBlueMoney] = useState(600) 
-  const [orangeMoney, setOrangeMoney] = useState(600)
-  const [turn, setTurn] = useState("") //A string for the top of the page
-  const [moves, setMoves] = useState(3)//Tracks moves
-  const [userSide, setUserSide] = useState()
-  
+  // Game state
+  const [grid, setGrid] = useState([]); // stores the grid array
+  const [color, setColor] = useState("selector-blue"); // tracks the color of the inv
+  const [side, setSide] = useState(true); // true == blue, false == orange
+  const [blueMoney, setBlueMoney] = useState(600);
+  const [orangeMoney, setOrangeMoney] = useState(600);
+  const [turn, setTurn] = useState(""); // string for the top of the page
+  const [moves, setMoves] = useState(3); // tracks moves
+  const [userSide, setUserSide] = useState();
   const [canMove, setCanMove] = useState(true);
 
-  const dragPositionRef = useRef(null); // Ref to store position of dragged cell
-  const dragClassRef = useRef(null)
+  // Drag references (useRef prvents rerenders)
+  const dragPositionRef = useRef(null); // position of dragged cell
+  const dragClassRef = useRef(null);
   const dragCharacterRef = useRef(null);
-  const beforeChangeRef = useRef(null)
+  const beforeChangeRef = useRef(null);
 
-  const { showBelowInv, setLoadRoom, loadRoom, blueUser, setBlueUser,  orangeUser, setOrangeUser} = useGameContext(); 
+  // Global game context
+  const { showBelowInv, setLoadRoom, loadRoom, blueUser, setBlueUser,  orangeUser, setOrangeUser} = useGameContext();
+  
+  // Define characters
+  const minuteMen = "MM";
+  const archer = 'A';
+  const priest = "P";
+  const miner = "M";
+  const wizard = "W";
+  const necromancer = "N";
+  const carpenter = "C";
+  const barrier = 'B';
+  let copyMoves = moves;
 
   useEffect(() => {
-    if (moves <= 0) {
-      setCanMove(false);
-    } else {
-      setCanMove(true);
-    }
+    setCanMove(moves > 0);
   }, [grid, moves, turn]);
 
- useEffect(() => {
-  socket.on('assignRoles', ({ blueUser, orangeUser }) => {
-    setBlueUser(blueUser + "'s");
-    setOrangeUser(orangeUser + "'s");
-    setUserSide(username === blueUser ? blueUser : orangeUser);
+  // Assign player roles and detect full room
+  useEffect(() => {
+    const handleAssignRoles = ({ blueUser, orangeUser }) => {
+      setBlueUser(blueUser + "'s");
+      setOrangeUser(orangeUser + "'s");
+      setUserSide(username === blueUser ? blueUser : orangeUser);
 
-    if (blueUser !== "" && orangeUser !== "") {
-      setLoadRoom(true);
-    }
-  });
+      if (blueUser !== "" && orangeUser !== "") {
+        setLoadRoom(true);
+      }
+    };
 
-  socket.on('roomFull', () => {
-    console.log('full');
-  });
+    socket.on('assignRoles', handleAssignRoles);
+    socket.on('roomFull', () => console.log('full'));
 
- 
-  return () => {
-    socket.off('assignRoles');
-    socket.off('roomFull');
-  };
-}, []); 
-
-
-   // Define characters
-   const minuteMen = "MM";
-   const archer = 'A';
-   const priest = "P";
-   const miner = "M";
-   const wizard = "W";
-   const necromancer = "N";
-   const carpenter = "C";
-   const barrier = 'B';
-   let copyMoves = moves;
+    return () => {
+      socket.off('assignRoles', handleAssignRoles);
+      socket.off('roomFull');
+    };
+  }, []);
 
    useEffect(() => {
     setGrid(createGrid(14, color))
   },[])
 
   //send new side to clients
-  useEffect(()=>{
-    socket.on('receiveUpdated', (newSide) => {
-      setSide(newSide)
-      setNewColor()
-    });
-
-    // Cleanup on component unmount
-    return () => {
-      socket.off('receiveUpdated');
+  useEffect(() => {
+    const handleReceiveUpdated = (newSide) => {
+      setSide(newSide);
+      setNewColor();
     };
-  },[side, color, turn])
+
+    socket.on('receiveUpdated', handleReceiveUpdated);
+
+    return () => {
+      socket.off('receiveUpdated', handleReceiveUpdated);
+    };
+  }, [side, color, turn]);
 
   // UseEffect For broadcasting colors
-useEffect(() => {
-    socket.on('receiveMovesUpdated', (newMoves) => {
-        setMoves(newMoves);
-    });
-
-    return () => {
-        socket.off('receiveMovesUpdated');
+  useEffect(() => {
+    const handleReceiveMovesUpdated = (newMoves) => {
+      setMoves(newMoves);
     };
-}, [grid, moves]);
+  
+    socket.on('receiveMovesUpdated', handleReceiveMovesUpdated);
+  
+    return () => {
+      socket.off('receiveMovesUpdated', handleReceiveMovesUpdated);
+    };
+  }, [grid, moves]);
 
   //update the grid for clients
   useEffect(() => {
-    socket.on('receiveGridUpdated', (serializedGrid) => {
-      setGrid(serializedGrid.map((cell) => {
-      const [cellI, cellJ] = cell.id.split('-').map(Number);
-      let icon = determineSentIcon(cell.content)
-      if(icon == undefined){
-        icon = ''
-      }
-      
+    const handleReceiveGridUpdated = (serializedGrid) => {
+      const updatedGrid = serializedGrid.map((cell) => {
+        const [cellI, cellJ] = cell.id.split('-').map(Number);
+        let icon = determineSentIcon(cell.content) || '';
+  
         return (
           <button
             key={cell.id}
@@ -122,31 +118,36 @@ useEffect(() => {
             {icon}
           </button>
         );
-      }));
-    });
- 
-    // Cleanup on component unmount
+      });
+  
+      setGrid(updatedGrid);
+    };
+  
+    socket.on('receiveGridUpdated', handleReceiveGridUpdated);
+  
     return () => {
-      socket.off('receiveGridUpdated');
+      socket.off('receiveGridUpdated', handleReceiveGridUpdated);
     };
   }, [grid, turn]);
 
-   // UseEffect For broadcasting colors
-   useEffect(()=>{
-    socket.on('receiveMoneyUpdated', (newPrice) => {
-      setBlueMoney(newPrice[0])
-      setOrangeMoney(newPrice[1])
-    });
-
-    return () => {
-      socket.off('receiveMoneyUpdated');
+   // UseEffect For broadcasting money
+   useEffect(() => {
+    const handleReceiveMoneyUpdated = ([blue, orange]) => {
+      setBlueMoney(blue);
+      setOrangeMoney(orange);
     };
-  },[blueMoney, orangeMoney, grid])
+  
+    socket.on('receiveMoneyUpdated', handleReceiveMoneyUpdated);
+  
+    return () => {
+      socket.off('receiveMoneyUpdated', handleReceiveMoneyUpdated);
+    };
+  }, [blueMoney, orangeMoney, grid]);
  
  
   const updateSideState = () => {
     socket.emit("sendUpdate", side, room);
-};
+  };
 
 const updateMoneyState = () => {
   setBlueMoney((prevBlueMoney) => {
@@ -199,10 +200,7 @@ const sendGridUpdate = () => {
         const className = cell.props.className
         const drag = cell.props.children == '' ? false : true
            
-        // Print the className of the cell to the console
         setMoves(3)
-
-
         return (
           <button
             className={className}
