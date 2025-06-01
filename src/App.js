@@ -473,13 +473,25 @@ const handleAbilityCases = (cell, id, droppedContent, color, className, targetI,
   switch (droppedContent) {
     case 'Pu':
       return priestAbility(cell, cellI, cellJ, color, className);
-
+    //barrier
     case 'B':
       if (cell.props.id === id || isAboveTarget) {
+        // Prevent placing a barrier next to another barrier
+        const adjacentHasBarrier = neighbors.some(([i, j]) => {
+          const neighborCell = prevGrid.find(c => c.props.id === `${i}-${j}`);
+          return neighborCell && neighborCell.props.children === 'B';
+        });
+        
+        if (adjacentHasBarrier) {
+          setTurn("Too close to another barrier");
+          setTimeout(() => setTurn(""), 1500);
+          return cell; 
+        }
+    
         handleMoney(barrier, color);
         return renderBoxButton('box-black', 'B', cell.props.id, cellI, cellJ, color);
       }
-      break;
+      break;    
     //spread
     case 'Sp':
       if (cell.props.id === id || isAboveTarget || isBelowTarget) {
@@ -616,7 +628,6 @@ function handleDrop(e, id, color) {
       const cellAsId = `${cellI}-${cellJ}`;
 
       if (isTargetCell) {
-        //track killed character
         if (droppedContent === 'Arrow') {
           return renderBoxButton(className, '', cell.props?.id, cellI, cellJ, color);
         } else if (dragClassRef.current === 'selector-blue' || dragClassRef.current === 'selector-orange') {
@@ -628,7 +639,8 @@ function handleDrop(e, id, color) {
         }
       } else if (droppedContent === 'fireBall' && isNeighbor) {
         return renderBoxButton(className, <AiFillFire size={35} name='F' />, cell.props.id, cellI, cellJ, color);
-      } else if (cellAsId === dragPositionRef.current) {
+      }
+      else if (cellAsId === dragPositionRef.current) {
         return renderBoxButton(className, '', cell?.props?.id, cellI, cellJ, color);
       } else if (cell?.props?.children !== '') {
         return renderBoxButton(cell.props.className, cell.props.children, cell.props.id, cellI, cellJ, color);
