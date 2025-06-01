@@ -152,9 +152,7 @@ function App({ socket, username, room }) {
 const updateMoneyState = () => {
   setBlueMoney((prevBlueMoney) => {
     setOrangeMoney((prevOrangeMoney) => {
-      const updatedBlueMoney = prevBlueMoney; 
-      const updatedOrangeMoney = prevOrangeMoney; 
-      socket.emit("sendMoneyUpdate", [updatedBlueMoney, updatedOrangeMoney], room);
+      socket.emit("sendMoneyUpdate", [prevBlueMoney, prevOrangeMoney], room);
       return prevOrangeMoney;
     });
     return prevBlueMoney;
@@ -163,8 +161,7 @@ const updateMoneyState = () => {
 
 const updateMoves = () =>{
   setMoves((prevMoves)=>{
-    const updatedMoves = prevMoves
-    socket.emit("sendMovesUpdate", updatedMoves, room)
+    socket.emit("sendMovesUpdate", prevMoves, room)
     return prevMoves
   })
 }
@@ -185,8 +182,7 @@ const serializeGrid = (grid) => {
 
 const sendGridUpdate = () => {
   setGrid((prevGrid) => {
-    const serializedGrid = serializeGrid(prevGrid);
-    socket.emit("sendGridUpdate", serializedGrid, room);
+    socket.emit("sendGridUpdate", serializeGrid(prevGrid), room);
     return prevGrid;
   });
 };
