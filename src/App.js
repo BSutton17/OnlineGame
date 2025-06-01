@@ -245,12 +245,12 @@ const sendGridUpdate = () => {
 
   const setNewColor = () => {
     if (!side) {
-        setOrangeMoney(prevOrangeMoney => prevOrangeMoney + 100);
+        setOrangeMoney(prevOrangeMoney => prevOrangeMoney + 150);
         setColor("selector-blue");
         setTurn("Blue's Turn");
         setMoves(3);
     } else {
-        setBlueMoney(prevBlueMoney => prevBlueMoney + 100);
+        setBlueMoney(prevBlueMoney => prevBlueMoney + 150);
         setColor("selector-orange");
         setTurn("Orange's Turn");
         setMoves(3);
