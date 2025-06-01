@@ -245,12 +245,12 @@ const sendGridUpdate = () => {
 
   const setNewColor = () => {
     if (!side) {
-        setOrangeMoney(prevOrangeMoney => prevOrangeMoney + 150);
+        setOrangeMoney(prevOrangeMoney => prevOrangeMoney + 100);
         setColor("selector-blue");
         setTurn("Blue's Turn");
         setMoves(3);
     } else {
-        setBlueMoney(prevBlueMoney => prevBlueMoney + 150);
+        setBlueMoney(prevBlueMoney => prevBlueMoney + 100);
         setColor("selector-orange");
         setTurn("Orange's Turn");
         setMoves(3);
@@ -543,15 +543,17 @@ const handleAbilityCases = (cell, id, droppedContent, color, className, targetI,
     const isAttackerCell = cellAsId === dragPositionRef.current;
 
     // Check if killed content is barrier or fire 
-    const killedIsBarrier = killedContent?.props?.name === 'B';
+    const killedIsBarrier =killedCell.props.className === 'box-black';
     const killedIsFire = killedContent && killedContent.props?.name === 'F';
 
+    //killed cell
     if (isKilledCell && (killedIsBarrier || killedIsFire)) {
-      return renderBoxButton(cell.props.className, '', cell.props.id, cellI, cellJ, null);
+      return renderBoxButton(determineBackground(cellI, cellJ, ''), '', cell.props.id, cellI, cellJ, null);
     }
 
+    //attacker cell
     if (isAttackerCell && (killedIsBarrier || killedIsFire)) {
-      return renderBoxButton( determineBackground(cellI, cellJ, cell.props.children), '', cell.props.id, cellI, cellJ, null);
+      return renderBoxButton(determineBackground(cellI, cellJ, cell.props.children), '', cell.props.id, cellI, cellJ, null);
     }
 
     resetColors()
