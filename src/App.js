@@ -513,14 +513,20 @@ const handleAbilityCases = (cell, id, droppedContent, color, className, targetI,
       break;
     //rise
     case 'Ri':
-      if (cell.props.id === id || isNeighbor) {
-        const boxClassName = dragClassRef.current === "selector-blue" ? 'box-blue' : 'box-orange';
-        if(cell.props.id === id ){
-          return renderBoxButton(boxClassName, <GiCrownedSkull size={35} name="N"/>, cell.props.id, cellI, cellJ, color);
-        }
-        return renderBoxButton(boxClassName, <GiRaiseSkeleton size={35} name='S' />, cell.props.id, cellI, cellJ, color);
-      }
-      break;
+  if (cell.props.id === id) {
+    const boxClassName = dragClassRef.current === "selector-blue" ? 'box-blue' : 'box-orange';
+    return renderBoxButton(boxClassName, <GiCrownedSkull size={35} name="N" />, cell.props.id, cellI, cellJ, color);
+  }
+
+  if (isNeighbor) {
+    // Only raise skeleton if the cell is empty
+    const existingContent = cell.props.children;
+    if (!existingContent || existingContent === '') {
+      const boxClassName = dragClassRef.current === "selector-blue" ? 'box-blue' : 'box-orange';
+      return renderBoxButton(boxClassName, <GiRaiseSkeleton size={35} name='S' />, cell.props.id, cellI, cellJ, color);
+    }
+  }
+  break;
 
     default:
       break;
