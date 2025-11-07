@@ -12,7 +12,7 @@ body {
   flex-direction: column;
   height: 100vh;
   background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 50%, #16213e 100%);
-  overflow: hidden;
+  overflow-x: hidden;
   font-family: 'Rajdhani', 'Segoe UI', sans-serif;
   position: relative;
 }
@@ -37,7 +37,7 @@ button {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: 'Rajdhani', sans-serif;
   font-weight: 600;
-  user-select: none;
+  -webkit-user-drag: element;
 }
 
 button:hover {
@@ -93,19 +93,7 @@ h1 {
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   border: 2px solid rgba(255, 255, 255, 0.05);
   position: relative;
-}
-
-#board-box::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 12px;
-  padding: 2px;
-  background: linear-gradient(135deg, rgba(100, 149, 237, 0.3), rgba(255, 140, 50, 0.3));
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  opacity: 0.3;
+  z-index: 100;
 }
 
 .box-white, .box-orange, .box-blue, .box-green, .box-purple, .box-dark-green, .box-red {
@@ -173,6 +161,11 @@ h1 {
 .box-grey {
   background: linear-gradient(135deg, #b5b2b2 0%, #8a8888 100%);
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+  height: 4.8em;
+  width: 4.8em;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  transition: all 0.2s ease;
 }
 
 .box-aqua {
@@ -180,6 +173,11 @@ h1 {
   box-shadow: 
     0 0 15px rgba(11, 196, 238, 0.3),
     inset 0 1px 2px rgba(255, 255, 255, 0.2);
+  height: 4.8em;
+  width: 4.8em;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  transition: all 0.2s ease;
 }
 
 .box-yellow {
@@ -187,6 +185,11 @@ h1 {
   box-shadow: 
     0 0 15px rgba(216, 132, 5, 0.3),
     inset 0 1px 2px rgba(255, 255, 255, 0.2);
+  height: 4.8em;
+  width: 4.8em;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  transition: all 0.2s ease;
 }
 
 .box-black {
@@ -196,6 +199,17 @@ h1 {
     inset 0 0 20px rgba(0, 0, 0, 0.9),
     0 0 10px rgba(0, 0, 0, 0.5);
   border: 2px solid rgba(100, 100, 100, 0.3);
+  height: 4.8em;
+  width: 4.8em;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+/* Prevent SVG icons inside board cells from blocking drops */
+.box-white > svg, .box-orange > svg, .box-blue > svg, .box-green > svg, 
+.box-purple > svg, .box-dark-green > svg, .box-red > svg,
+.box-grey > svg, .box-aqua > svg, .box-yellow > svg, .box-black > svg {
+  pointer-events: none;
 }
 
 #inventory {
@@ -223,22 +237,10 @@ h1 {
     0 8px 32px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   position: relative;
-  overflow: hidden;
 }
 
-.selector-blue::before, .selector-orange::before, .change::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transition: left 0.5s;
-}
-
-.selector-blue:hover::before, .selector-orange:hover::before, .change:hover::before {
-  left: 100%;
+.selector-blue > *, .selector-orange > *, .change > * {
+  pointer-events: none;
 }
 
 .selector-blue:hover, .selector-orange:hover, .change:hover {
@@ -454,8 +456,18 @@ h1 {
   box-shadow: 
     0 10px 40px rgba(0, 0, 0, 0.9),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  z-index: 1000;
+  z-index: 10;
   animation: turnPulse 0.5s ease-in-out;
+  pointer-events: none;
+}
+
+.turn:last-of-type {
+  top: 1rem;
+  right: 1rem;
+  left: auto;
+  transform: none;
+  font-size: 1.5rem;
+  padding: 0.8rem 1.5rem;
 }
 
 @keyframes turnPulse {
