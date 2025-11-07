@@ -1,101 +1,236 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap');
+
 #how-to-play {
-    padding: 5% 1%;
-    height: 100%;
-    width: 98%;
-    background-image: linear-gradient(135deg, rgb(241, 76, 11) 60%, blue );
-    margin-top: 70vh;
-    margin-right: 15vw;
-    
-  }
-  
-  #characters{
-    padding-top: 12%;
-    padding-bottom: 8%;
-    padding-right: 2%;
-    padding-left: 2%;
-    height: 140%;
-    width: 99%;
-    background-image: linear-gradient(135deg, rgb(241, 76, 11) 50%, blue );
-    margin-top: 80vh;
-    margin-right: 25vw;
-  }
-  #how-to-play > h1,  #characters > h1 {
-    font-size: 200%;
-  }
-  
-  #how-to-play > p,  #characters > p {
-    font-size: 120%;
+  padding: 3rem 4rem;
+  max-width: 1200px;
+  margin: 2rem auto;
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5));
+  border-radius: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  color: white;
+  font-family: 'Rajdhani', sans-serif;
+  backdrop-filter: blur(10px);
+  overflow-y: auto;
+  max-height: 85vh;
+}
+
+#characters {
+  padding: 3rem 4rem;
+  max-width: 1200px;
+  margin: 2rem auto;
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5));
+  border-radius: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  color: white;
+  font-family: 'Rajdhani', sans-serif;
+  backdrop-filter: blur(10px);
+  overflow-y: auto;
+  max-height: 85vh;
+}
+
+#how-to-play > h1, #characters > h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-top: 2rem;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #6495ed, #ff8c32);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+#how-to-play > h1:first-of-type, #characters > h1:first-of-type {
+  margin-top: 0;
+  font-size: 4rem;
+}
+
+#how-to-play > p, #characters > p {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 2rem;
+  font-weight: 400;
+}
+
+#how-to-play > p strong, #characters > p strong {
+  color: #6495ed;
+  font-weight: 700;
+}
+
+#characters > h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #ff8c32;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+#characters > p {
+  margin-top: 0.5rem;
+}
+
+.infoButton {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  width: 15vw;
+  min-width: 180px;
+  height: auto;
+  min-height: 50px;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  margin: 1.5rem 1rem;
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.infoButton:hover {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.infoButton:active {
+  transform: translateY(0);
+}
+
+input {
+  border-radius: 8px;
+  padding: 0.8rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+input:focus {
+  outline: none;
+  border-color: rgba(100, 149, 237, 0.6);
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 20px rgba(100, 149, 237, 0.3);
+}
+
+.icons {
+  position: absolute;
+  opacity: 0.15;
+  color: rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+  z-index: 0;
+}
+
+#TbBow {
+  left: 65%;
+  top: 40%;
+  transform: rotate(23deg);
+}
+
+#TbSwords {
+  left: 10%;
+  top: 20%;
+}
+
+#TbCross {
+  left: 65%;
+  top: 10%;
+  transform: rotate(330deg);
+}
+
+#TbShovel {
+  left: 40%;
+  top: 70%;
+  transform: rotate(95deg);
+}
+
+#PiMagicWandFill {
+  left: 10%;
+  top: 70%;
+  transform: rotate(258deg);
+}
+
+#PiHammerFill {
+  left: 85%;
+  top: 25%;
+  transform: rotate(-12deg);
+}
+
+#GiCrownedSkull {
+  left: 35%;
+  top: 1%;
+}
+
+#GiRaiseSkeleton {
+  left: 50%;
+  top: 65%;
+  transform: rotate(358deg);
+}
+
+/* Scrollbar styling */
+#how-to-play::-webkit-scrollbar, #characters::-webkit-scrollbar {
+  width: 8px;
+}
+
+#how-to-play::-webkit-scrollbar-track, #characters::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+#how-to-play::-webkit-scrollbar-thumb, #characters::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #6495ed, #ff8c32);
+  border-radius: 10px;
+}
+
+#how-to-play::-webkit-scrollbar-thumb:hover, #characters::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #89b4ff, #ffaa5c);
+}
+
+/* Responsive design */
+@media screen and (max-width: 768px) {
+  #how-to-play, #characters {
+    padding: 2rem;
+    margin: 1rem;
   }
 
-  #characters > p {
-    margin-top: -0.6%;
-  }
-  #characters > h2{
-    font-size: 160%;
-  }
-  .infoButton{
-    background: transparent;
-    width: 15vw;
-    height: 3vh;
-    border-radius: 20px;
-    margin: 2%;
-    color: white;
-    z-index: 1;
+  #how-to-play > h1:first-of-type, #characters > h1:first-of-type {
+    font-size: 2.5rem;
   }
 
-  input{
-    border-radius: 5px;
+  #how-to-play > h1, #characters > h1 {
+    font-size: 2rem;
   }
 
-  .icons{
-    position: absolute;
+  #characters > h2 {
+    font-size: 1.5rem;
   }
 
-  #TbBow {
-    left: 65%;
-    top: 40%;
-    transform: rotate(23deg)
-  }
-  
-  #TbSwords {
-    left: 10%;
-    top: 20%;
-  }
-  
-  #TbCross {
-    left: 65%;
-    top: 10%;
-    transform: rotate(330deg)
+  #how-to-play > p, #characters > p {
+    font-size: 1rem;
   }
 
-  
-  #TbShovel {
-    left: 40%;
-    top: 70%;
-    transform: rotate(95deg)
+  .infoButton {
+    width: 90%;
+    margin: 1rem auto;
+    display: block;
   }
-  
-  #PiMagicWandFill {
-    left: 10%;
-    top: 70%;
-    transform: rotate(258deg)
-  }
-  
-  #PiHammerFill {
-    left: 85%;
-    top: 25%;
-    transform: rotate(-12deg)
-  }
-  
-  #GiCrownedSkull {
-    left: 35%;
-    top: 1%;
-  }
-  
-  #GiRaiseSkeleton {
-    left: 50%;
-    top: 65%;
-    transform: rotate(358deg)
-  }
-  
-  
+}  
