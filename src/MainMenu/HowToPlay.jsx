@@ -54,8 +54,8 @@ function pages(rules) {
       title: 'Moving',
       body: (
         <>
-          <p>Tap a piece (or drag it). <strong>Green</strong> squares are where it can go. <strong>Dark green</strong> squares are farther away and only open if the way there is clear - nothing can jump over allies, enemies or barriers.</p>
-          <p>Every piece except the MinuteMan can also step <strong>one square straight back</strong>.</p>
+          <p>Tap a piece (or drag it). <strong>Green</strong> squares are where it can go. <strong>Dark green</strong> squares are farther away and only open if the way there is clear - nothing can jump over allies, enemies or barriers, and no move can cross a barrier, not even by cutting round its corner.</p>
+          <p>Every piece except the MinuteMan can also step <strong>one square straight back</strong>. A step back uses one of your moves, but that piece <strong>can still move again</strong> the same turn.</p>
           <p><strong>Melee</strong> pieces capture an enemy by moving onto it.</p>
           <p><strong>Archers and Wizards</strong> are ranged: they can't move onto an enemy. Instead, every time one moves, it automatically shoots the enemy <strong>directly in front</strong> of the square it lands on. Moves that will shoot someone light up <strong>yellow</strong>. MinuteMen are immune to arrows and spells.</p>
         </>
