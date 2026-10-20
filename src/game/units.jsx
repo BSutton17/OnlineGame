@@ -9,16 +9,16 @@ export const UNITS = {
   MM: {
     name: 'MinuteMan',
     Icon: TbSwords,
-    blurb: 'The most basic and reliable troop - and the only one that can win the game by reaching the far side!',
+    blurb: 'The most basic and reliable troop: cheap, quick, and always charging for the far side.',
     range: 'Melee',
-    moves: 'Charges 1 or 2 squares straight ahead, and can move twice a turn. On your own half it can also step diagonally forward.',
-    ability: 'Shield (passive): immune to arrows, spells and explosions.',
+    moves: 'Charges 1 or 2 squares straight ahead, and can move twice a turn. It never moves sideways or back.',
+    ability: "Shield (passive): immune to Wizards' spells and to Spread - but an Archer's arrow or an Explosion still gets it.",
   },
   A: {
     name: 'Archer',
     Icon: TbBow,
     blurb: 'Strong and determined, archers support allies from afar.',
-    range: 'Ranged: every time it moves, it shoots the enemy directly in front of where it lands',
+    range: 'Ranged: every time it moves, it shoots the enemy directly in front of where it lands - even a MinuteMan',
     moves: 'Up to 2 squares forward, fanning out sideways, or one step back.',
     ability: 'Spread (costs money): fire at a square in front of an archer and hit the squares above and below it too.',
   },
@@ -35,16 +35,16 @@ export const UNITS = {
     Icon: TbShovel,
     blurb: 'Resilient diggers. Not even barriers can stand in their way... but fire might.',
     range: 'Melee',
-    moves: '1 or 2 squares straight ahead (3 when tunnelling under a barrier), or one step back.',
+    moves: '1 or 2 squares straight ahead (3 when tunnelling under a barrier), and can move twice a turn, or one step back.',
     ability: "Burrow (passive): tunnels under barriers - but not fire, and not a barrier an enemy carpenter is touching.",
   },
   W: {
     name: 'Wizard',
     Icon: PiMagicWandFill,
-    blurb: "Some would say the smartest troop in your empire. They don't mess around with fire.",
+    blurb: "Some would say the smartest troop in your empire. They don't mess around with fire. You can have at most 2 at a time.",
     range: 'Ranged: every time it moves, it casts a spell on the enemy directly in front of where it lands',
     moves: 'Sideways or diagonally forward, up to 2 squares, or one step back.',
-    ability: 'Explosion! (costs money): a ring of fire bursts out around the wizard, destroying everything in it except MinuteMen. Wizards walk through fire.',
+    ability: 'Explosion! (costs money): a ring of fire bursts out around the wizard, destroying everything in it, even MinuteMen. Wizards walk through fire.',
   },
   N: {
     name: 'Necromancer',
@@ -85,3 +85,6 @@ export const ABILITIES = [
 ];
 
 export const sideName = (side) => (side === 'blue' ? 'Blue' : 'Orange');
+
+// "Wizards", "MinuteMen".
+export const pluralName = (unit) => (UNITS[unit].name.endsWith('Man') ? `${UNITS[unit].name.slice(0, -3)}Men` : `${UNITS[unit].name}s`);

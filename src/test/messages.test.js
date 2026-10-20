@@ -22,10 +22,11 @@ describe('describeEvent', () => {
 });
 
 describe('winText', () => {
-  const finished = (winner, winReason) => ({ ...view, game: { winner, winReason } });
+  const finished = (winner, winReason, winUnit) => ({ ...view, game: { winner, winReason, winUnit } });
   test('explains how the game ended', () => {
-    expect(winText(finished('blue', 'reachedEnd'))).toEqual({ title: 'Victory!', detail: 'Your MinuteMan reached the far side of the board!' });
-    expect(winText(finished('orange', 'reachedEnd')).title).toBe('Defeat');
+    expect(winText(finished('blue', 'reachedEnd', 'MM'))).toEqual({ title: 'Victory!', detail: 'Your MinuteMan reached the far side of the board!' });
+    expect(winText(finished('orange', 'reachedEnd', 'W'))).toEqual({ title: 'Defeat', detail: "Ben's Wizard reached your side of the board." });
+    expect(winText(finished('blue', 'reachedEnd')).detail).toBe('Your piece reached the far side of the board!');
     expect(winText(finished('blue', 'forfeit')).detail).toBe('Ben left the game.');
     expect(winText(finished('draw', 'turnLimit')).title).toBe('Draw');
     expect(winText({ ...view, game: { winner: null } })).toBe(null);

@@ -40,15 +40,19 @@ function useNow(active) {
   return now;
 }
 
-// How many pieces and barrier squares a side has, against the limits.
+// How many pieces (in all, and of each kind) and barrier squares a side has, against the limits.
 function countsFor(game, side) {
   let pieces = 0;
   let barriers = 0;
+  const units = {};
   for (const cell of game.grid) {
-    if (cell?.t === 'piece' && cell.owner === side) pieces += 1;
+    if (cell?.t === 'piece' && cell.owner === side) {
+      pieces += 1;
+      units[cell.unit] = (units[cell.unit] || 0) + 1;
+    }
     if (cell?.t === 'barrier' && cell.owner === side) barriers += 1;
   }
-  return { pieces, barriers, pieceLimit: game.config.pieceLimit, barrierLimit: game.config.barrierLimit };
+  return { pieces, barriers, units, pieceLimit: game.config.pieceLimit, barrierLimit: game.config.barrierLimit, unitCaps: game.config.unitCaps };
 }
 
 function CashPanel({ side, view }) {

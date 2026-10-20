@@ -1,5 +1,5 @@
 import React from 'react';
-import { UNITS, SHOP } from './game/units.jsx';
+import { UNITS, SHOP, pluralName } from './game/units.jsx';
 import { GiBrickWall } from 'react-icons/gi';
 
 function ShopTile({ color, unit, name, price, Icon, enabled, selected, why, onSelect }) {
@@ -33,6 +33,8 @@ export default function Inventory({ color, costs, money, legal, yourTurn, movesL
     if (movesLeft <= 0) return 'Out of moves';
     if (costs[unit] > money) return `Need $${costs[unit]}`;
     if (unit !== 'B' && limits?.pieces >= limits?.pieceLimit) return `Piece limit reached (${limits.pieceLimit})`;
+    const cap = limits?.unitCaps?.[unit];
+    if (cap != null && (limits.units?.[unit] || 0) >= cap) return `You can only have ${cap} ${pluralName(unit)} at a time`;
     if (unit === 'B' && limits?.barriers + 2 > limits?.barrierLimit) return `Barrier limit reached (${limits.barrierLimit} squares)`;
     return unit === 'B' ? 'No room for a barrier right now' : 'No free square to place it';
   };

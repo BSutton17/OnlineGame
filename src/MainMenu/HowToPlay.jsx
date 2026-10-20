@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './HTP.css';
 import Characters from './Characters';
 import { useGameContext } from '../Context/GameContext';
+import { pluralName } from '../game/units.jsx';
 
 // The rules, split into short pages so nothing ever needs scrolling.
 function pages(rules) {
@@ -9,9 +10,13 @@ function pages(rules) {
   const start = rules ? `$${rules.startingMoney}` : 'some money';
   const moves = rules?.movesPerTurn ?? 3;
   const barrier = rules ? `$${rules.costs.B}` : 'a little money';
-  const firstTurn = rules?.firstTurnMoves ?? 1;
+  const firstTurn = rules?.firstTurnMoves ?? moves;
   const perPiece = rules?.pieceMoveLimit ?? 1;
-  const mmLimit = rules?.unitMoveLimits?.MM ?? 2;
+  const bonus = rules?.secondPlayerBonus ?? 0;
+  const anyPieceWins = !rules || !rules.winUnits;
+  // Pieces allowed to move twice a turn, e.g. "MinuteMen and Miners".
+  const twice = Object.entries(rules?.unitMoveLimits ?? { MM: 2 }).filter(([, n]) => n === 2).map(([u]) => pluralName(u));
+  const caps = Object.entries(rules?.unitCaps ?? {}).map(([u, n]) => `${n} ${pluralName(u)}`);
   const abilityPrices = rules
     ? `Spread $${rules.costs.spread}, Purify $${rules.costs.purify}, Explosion! $${rules.costs.explosion}, Rise $${rules.costs.rise}`
     : null;
@@ -22,9 +27,14 @@ function pages(rules) {
         <>
           <p>Overlord is a two-player battle. To play a friend, one of you presses <strong>Play Now</strong> with the room box empty, then shares the 4-digit room number (or invite link). The other types it in.</p>
           <h2>How to Win</h2>
-          <p>Get a <strong>MinuteMan</strong> all the way to the far side of the board. Blue marches right, Orange marches left. Other pieces can get there too, but only a MinuteMan wins - so protect yours and stop theirs!</p>
+          {anyPieceWins ? (
+            <p>Get <strong>any one of your pieces</strong> all the way to the far side of the board. Blue marches right, Orange marches left. Every piece is a threat - so guard every lane!</p>
+          ) : (
+            <p>Get a <strong>MinuteMan</strong> all the way to the far side of the board. Blue marches right, Orange marches left. Other pieces can get there too, but only a MinuteMan wins - so protect yours and stop theirs!</p>
+          )}
           <p>
-            Everyone starts with {start}, and you earn {income} every time you end your turn
+            Everyone starts with {start}
+            {bonus > 0 ? <> (Orange gets <strong>${bonus}</strong> extra for going second)</> : null}, and you earn {income} every time you end your turn
             {rules?.killBounty > 0 ? <>, plus <strong>${rules.killBounty}</strong> for every enemy piece you take</> : null}.
           </p>
         </>
@@ -40,12 +50,17 @@ function pages(rules) {
             <li>
               moving a piece
               {perPiece === 1 ? ' (each piece can move once a turn' : perPiece ? ` (one piece can move at most ${perPiece} times a turn` : ''}
-              {perPiece && mmLimit && mmLimit !== perPiece ? `, MinuteMen ${mmLimit === 2 ? 'twice' : `${mmLimit} times`})` : perPiece ? ')' : ''}
+              {perPiece === 1 && twice.length ? `, ${twice.join(' and ')} twice)` : perPiece ? ')' : ''}
             </li>
             <li>building or repairing a barrier</li>
           </ul>
-          <p>Blue goes first, so Blue's very first turn has only <strong>{firstTurn} move{firstTurn === 1 ? '' : 's'}</strong>.</p>
-          {rules?.pieceLimit ? <p>You can have at most <strong>{rules.pieceLimit} pieces</strong> on the board at once.</p> : null}
+          {firstTurn < moves ? <p>Blue goes first, so Blue's very first turn has only <strong>{firstTurn} move{firstTurn === 1 ? '' : 's'}</strong>.</p> : null}
+          {rules?.spawnSickness ? <p><strong>Fresh recruits:</strong> a piece you buy can move right away, but it can't capture or shoot until your next turn.</p> : null}
+          {rules?.pieceLimit ? (
+            <p>
+              You can have at most <strong>{rules.pieceLimit} pieces</strong> on the board at once{caps.length ? <>, and at most <strong>{caps.join(' and ')}</strong></> : null}.
+            </p>
+          ) : null}
           <p>Abilities and skeleton steps <strong>don't use a move</strong>. When nothing is left to do, your turn ends by itself.</p>
         </>
       ),
@@ -57,7 +72,7 @@ function pages(rules) {
           <p>Tap a piece (or drag it). <strong>Green</strong> squares are where it can go. <strong>Dark green</strong> squares are farther away and only open if the way there is clear - nothing can jump over allies, enemies or barriers, and no move can cross a barrier, not even by cutting round its corner.</p>
           <p>Every piece except the MinuteMan can also step <strong>one square straight back</strong>. A step back uses one of your moves, but that piece <strong>can still move again</strong> the same turn.</p>
           <p><strong>Melee</strong> pieces capture an enemy by moving onto it.</p>
-          <p><strong>Archers and Wizards</strong> are ranged: they can't move onto an enemy. Instead, every time one moves, it automatically shoots the enemy <strong>directly in front</strong> of the square it lands on. Moves that will shoot someone light up <strong>yellow</strong>. MinuteMen are immune to arrows and spells.</p>
+          <p><strong>Archers and Wizards</strong> are ranged: they can't move onto an enemy. Instead, every time one moves, it automatically shoots the enemy <strong>directly in front</strong> of the square it lands on. Moves that will shoot someone light up <strong>yellow</strong>. MinuteMen are immune to Wizards' spells, but not to Archers' arrows or a Wizard's Explosion.</p>
         </>
       ),
     },

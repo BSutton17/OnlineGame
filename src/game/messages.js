@@ -37,8 +37,9 @@ export function winText(view) {
   const youWon = game.winner === view.you;
   const loser = view.players[game.winner === 'blue' ? 'orange' : 'blue']?.name || 'Your opponent';
   const winner = view.players[game.winner]?.name || 'Your opponent';
+  const piece = UNITS[game.winUnit]?.name || 'piece';
   const detail = {
-    reachedEnd: youWon ? 'Your MinuteMan reached the far side of the board!' : `${winner}'s MinuteMan reached your side of the board.`,
+    reachedEnd: youWon ? `Your ${piece} reached the far side of the board!` : `${winner}'s ${piece} reached your side of the board.`,
     resigned: youWon ? `${loser} resigned.` : 'You resigned.',
     forfeit: youWon ? `${loser} left the game.` : 'You were away too long.',
   }[game.winReason];
