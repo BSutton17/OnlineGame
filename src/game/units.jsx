@@ -84,7 +84,7 @@ export const ABILITIES = [
   { key: 'repair', title: 'Carpenter', name: 'Repair', unit: 'C', hint: 'Extend a barrier next to one of your carpenters. Costs a move.' },
   // Shown only when the server's rules have them (they then appear in the price list).
   { key: 'fortify', title: 'Carpenter', name: 'Fortify', unit: 'C', paid: true, optional: true, hint: 'Build a 1-square barrier next to one of your carpenters.' },
-  { key: 'curse', title: 'Necromancer', name: 'Curse', unit: 'N', paid: true, optional: true, hint: 'Pick an enemy piece within 2 squares of a necromancer: it cannot move next turn.' },
+  { key: 'curse', title: 'Necromancer', name: 'Curse', unit: 'N', paid: true, optional: true, hint: 'Pick an enemy piece near a necromancer: it cannot move next turn.' },
 ];
 
 export const sideName = (side) => (side === 'blue' ? 'Blue' : 'Orange');
