@@ -82,9 +82,42 @@ export const ABILITIES = [
   { key: 'explosion', title: 'Wizard', name: 'Explosion!', unit: 'W', paid: true, hint: 'Pick a wizard: ring it with fire.' },
   { key: 'rise', title: 'Necromancer', name: 'Rise', unit: 'N', paid: true, hint: 'Pick a necromancer: raise fallen allies as skeletons.' },
   { key: 'repair', title: 'Carpenter', name: 'Repair', unit: 'C', hint: 'Extend a barrier next to one of your carpenters. Costs a move.' },
+  // Shown only when the server's rules have them (they then appear in the price list).
+  { key: 'fortify', title: 'Carpenter', name: 'Fortify', unit: 'C', paid: true, optional: true, hint: 'Build a 1-square barrier next to one of your carpenters.' },
+  { key: 'curse', title: 'Necromancer', name: 'Curse', unit: 'N', paid: true, optional: true, hint: 'Pick an enemy piece within 2 squares of a necromancer: it cannot move next turn.' },
 ];
 
 export const sideName = (side) => (side === 'blue' ? 'Blue' : 'Orange');
 
 // "Wizards", "MinuteMen".
 export const pluralName = (unit) => (UNITS[unit].name.endsWith('Man') ? `${UNITS[unit].name.slice(0, -3)}Men` : `${UNITS[unit].name}s`);
+
+// A piece's ability text under the server's current rules (some pieces got
+// new jobs in the 2026-10-21 balance update; older servers keep the old text).
+export function abilityText(key, rules) {
+  const base = UNITS[key].ability;
+  if (!rules) return base;
+  const fire = rules.fireTurns ? ` The fire burns out after ${rules.fireTurns / 2} rounds.` : '';
+  switch (key) {
+    case 'P':
+      if (!rules.purifyMode || rules.purifyMode === 'undead') return base;
+      return `Purify (costs money): pick a priest - every enemy piece touching it is destroyed${rules.purifySparesShield ? ' (except MinuteMen, whose shields protect them)' : ''}.${rules.purifySacrifice ? ' The priest gives its life to do it.' : ''}`;
+    case 'M':
+      if (!rules.minerIncome) return base;
+      return `Gold mine (passive): each of your Miners${rules.minerIncomeHome ? ' on your half of the board' : ''} digs up $${rules.minerIncome} when you end your turn.${rules.winUnits && !rules.winUnits.includes('M') ? " Miners are diggers, not soldiers: they don't win by reaching the far side." : ''} Burrow: tunnels under barriers - but not fire, and not a barrier an enemy carpenter is touching.`;
+    case 'N': {
+      const parts = [];
+      if (rules.riseRevives) parts.push(`Rise (costs money): up to ${rules.riseMax} of your fallen pieces come back as themselves (most recent first) in front of the necromancer.`);
+      else parts.push(base);
+      if (rules.necroCurse) parts.push(`Curse (costs money): an enemy piece within ${rules.curseRange} squares can't move or use an ability on its next turn. Each necromancer can curse once a turn.`);
+      return parts.join(' ');
+    }
+    case 'C':
+      if (!rules.carpenterBuilds) return base;
+      return `${base} Fortify (costs money${rules.fortifyFree ? ", doesn't use a move" : ', uses a move'}): build a 1-square barrier on an empty square next to the carpenter - it may touch pieces.`;
+    case 'W':
+      return base + fire;
+    default:
+      return base;
+  }
+}

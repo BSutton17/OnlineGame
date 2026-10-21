@@ -11,7 +11,9 @@ export function groupLegal(actions = []) {
     spread: [],
     explosion: [],
     rise: [],
-    purify: null,
+    fortify: [],
+    curse: [],
+    purify: [], // one per priest that can use it (just one when the priest's position doesn't matter)
     endTurn: null,
     count: actions.length,
   };
@@ -32,10 +34,10 @@ export function groupLegal(actions = []) {
       case 'spread':
       case 'explosion':
       case 'rise':
-        g[a.type].push(a);
-        break;
+      case 'fortify':
+      case 'curse':
       case 'purify':
-        g.purify = a;
+        g[a.type].push(a);
         break;
       case 'endTurn':
         g.endTurn = a;
@@ -49,7 +51,6 @@ export function groupLegal(actions = []) {
 
 // Is a given ability usable right now?
 export function abilityReady(key, legal) {
-  if (key === 'purify') return Boolean(legal.purify);
   return (legal[key] || []).length > 0;
 }
 
@@ -85,10 +86,13 @@ export function targetsFor(selection, legal) {
       break;
     case 'spread':
     case 'repair':
+    case 'fortify':
+    case 'curse':
       for (const a of legal[selection.kind]) add(a.to, 'box-aqua', a);
       break;
     case 'explosion':
     case 'rise':
+    case 'purify':
       for (const a of legal[selection.kind]) add(a.from, 'box-aqua', a);
       break;
     default:

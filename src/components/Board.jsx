@@ -16,7 +16,7 @@ function describe(content, i) {
   const where = `row ${rowOf(i) + 1}, column ${colOf(i) + 1}`;
   if (content === null) return `Empty square, ${where}`;
   if (content.t !== 'piece') return `${content.t === 'fire' ? 'Fire' : 'Barrier'}, ${where}`;
-  return `${sideName(content.owner)} ${UNITS[content.unit].name}, ${where}`;
+  return `${sideName(content.owner)} ${UNITS[content.unit].name}${content.cursedUntil != null ? ' (cursed)' : ''}, ${where}`;
 }
 
 const Cell = memo(function Cell({ i, content, cls, position, last, canAct, draggable, droppable, handlers }) {
@@ -47,7 +47,8 @@ const Cell = memo(function Cell({ i, content, cls, position, last, canAct, dragg
         handlers.onDrop(i);
       }}
     >
-      {Icon && <Icon size="60%" />}
+      {/* a cursed piece (Necromancer's Curse) is drawn faded until it can move again */}
+      {Icon && <Icon size="60%" style={content.cursedUntil != null ? { opacity: 0.45 } : undefined} />}
     </button>
   );
 });

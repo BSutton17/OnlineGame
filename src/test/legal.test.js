@@ -20,7 +20,7 @@ describe('groupLegal', () => {
     expect(g.spawn.get('MM').map((a) => a.to)).toEqual([16, 2]);
     expect(g.byFrom.get(60)).toHaveLength(3);
     expect(g.barrier).toHaveLength(1);
-    expect(g.purify).toEqual({ type: 'purify', from: 3 });
+    expect(g.purify).toEqual([{ type: 'purify', from: 3 }]);
     expect(g.endTurn).toEqual({ type: 'endTurn' });
   });
 
@@ -61,5 +61,21 @@ describe('targetsFor', () => {
 
   test('nothing selected means nothing lit', () => {
     expect(targetsFor(null, g).size).toBe(0);
+  });
+});
+
+describe('piece jobs (Fortify, Curse, a Purify per priest)', () => {
+  const g = groupLegal([
+    { type: 'fortify', from: 40, to: 41 },
+    { type: 'curse', from: 50, to: 52 },
+    { type: 'purify', from: 3 },
+    { type: 'purify', from: 7 },
+  ]);
+  test('each is ready and lights up its targets (squares to build or curse, priests to pick)', () => {
+    expect(abilityReady('fortify', g)).toBe(true);
+    expect(abilityReady('curse', g)).toBe(true);
+    expect(targetsFor({ kind: 'fortify' }, g).get(41).action).toEqual({ type: 'fortify', from: 40, to: 41 });
+    expect(targetsFor({ kind: 'curse' }, g).get(52).cls).toBe('box-aqua');
+    expect([...targetsFor({ kind: 'purify' }, g).keys()]).toEqual([3, 7]);
   });
 });

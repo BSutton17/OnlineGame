@@ -11,7 +11,7 @@ const HOW = {
   burned: 'walked into fire',
 };
 
-const ABILITY = { spread: 'Spread', purify: 'Purify', explosion: 'Explosion!', rise: 'Rise' };
+const ABILITY = { spread: 'Spread', purify: 'Purify', explosion: 'Explosion!', rise: 'Rise', curse: 'Curse' };
 
 export function describeEvent(event, view) {
   const owner = (side) => (side === view.you ? 'Your' : `${view.players[side]?.name || 'Opponent'}'s`);

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { UNITS } from '../game/units.jsx';
+import { UNITS, abilityText } from '../game/units.jsx';
 import './HTP.css';
 
 const ORDER = ['MM', 'A', 'P', 'M', 'W', 'N', 'C', 'S'];
@@ -8,8 +8,13 @@ export default function Characters({ rules, onBack }) {
   const [picked, setPicked] = useState('MM');
   const unit = UNITS[picked];
   const price = (key) => (key === 'S' ? 'Raised' : rules ? `$${rules.costs[key]}` : '');
-  const ABILITY_OF = { A: 'spread', P: 'purify', W: 'explosion', N: 'rise' };
-  const abilityPrice = (key) => (rules && ABILITY_OF[key] ? `$${rules.costs[ABILITY_OF[key]]} each use` : null);
+  const ABILITY_OF = { A: ['spread'], P: ['purify'], W: ['explosion'], N: ['rise', 'curse'], C: ['fortify'] };
+  const NAME = { spread: 'Spread', purify: 'Purify', explosion: 'Explosion!', rise: 'Rise', curse: 'Curse', fortify: 'Fortify' };
+  const abilityPrice = (key) => {
+    const priced = rules && ABILITY_OF[key] ? ABILITY_OF[key].filter((k) => rules.costs[k] !== undefined) : [];
+    if (!priced.length) return null;
+    return priced.length === 1 ? `${rules.costs[priced[0]]} each use` : priced.map((k) => `${NAME[k]} ${rules.costs[k]}`).join(', ');
+  };
 
   return (
     <div className="rules-screen">
@@ -34,7 +39,7 @@ export default function Characters({ rules, onBack }) {
           <p>{unit.blurb}</p>
           <p><strong>Moves:</strong> {unit.moves}</p>
           <p><strong>Attack:</strong> {unit.range}</p>
-          <p><strong>Ability:</strong> {unit.ability}</p>
+          <p><strong>Ability:</strong> {abilityText(picked, rules)}</p>
           {abilityPrice(picked) && <p><strong>Ability price:</strong> {abilityPrice(picked)}</p>}
         </div>
         <div className="menu-buttons">

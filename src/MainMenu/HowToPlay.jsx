@@ -14,12 +14,14 @@ function pages(rules) {
   const perPiece = rules?.pieceMoveLimit ?? 1;
   const bonus = rules?.secondPlayerBonus ?? 0;
   const anyPieceWins = !rules || !rules.winUnits;
+  // e.g. every piece except Miners scores (Miners dig gold instead)
+  const nonScorers = rules?.winUnits && rules.winUnits.includes('MM') ? ['A', 'P', 'M', 'W', 'N', 'C'].filter((u) => !rules.winUnits.includes(u)) : [];
   // Pieces allowed to move twice a turn, e.g. "MinuteMen and Miners".
   const twice = Object.entries(rules?.unitMoveLimits ?? { MM: 2 }).filter(([, n]) => n === 2).map(([u]) => pluralName(u));
   const caps = Object.entries(rules?.unitCaps ?? {}).map(([u, n]) => `${n} ${pluralName(u)}`);
-  const abilityPrices = rules
-    ? `Spread $${rules.costs.spread}, Purify $${rules.costs.purify}, Explosion! $${rules.costs.explosion}, Rise $${rules.costs.rise}`
-    : null;
+  const ABILITY_NAMES = { spread: 'Spread', purify: 'Purify', explosion: 'Explosion!', rise: 'Rise', curse: 'Curse', fortify: 'Fortify' };
+  const activeAbilities = Object.keys(ABILITY_NAMES).filter((k) => !rules || rules.costs[k] !== undefined);
+  const abilityPrices = rules ? activeAbilities.map((k) => `${ABILITY_NAMES[k]} ${rules.costs[k]}`).join(', ') : null;
   return [
     {
       title: 'How to Play',
@@ -27,7 +29,9 @@ function pages(rules) {
         <>
           <p>Overlord is a two-player battle. To play a friend, one of you presses <strong>Play Now</strong> with the room box empty, then shares the 4-digit room number (or invite link). The other types it in.</p>
           <h2>How to Win</h2>
-          {anyPieceWins ? (
+          {nonScorers.length ? (
+            <p>Get <strong>any one of your pieces</strong> except {nonScorers.map(pluralName).join(' and ')} all the way to the far side of the board. Blue marches right, Orange marches left. Every soldier is a threat - so guard every lane!</p>
+          ) : anyPieceWins ? (
             <p>Get <strong>any one of your pieces</strong> all the way to the far side of the board. Blue marches right, Orange marches left. Every piece is a threat - so guard every lane!</p>
           ) : (
             <p>Get a <strong>MinuteMan</strong> all the way to the far side of the board. Blue marches right, Orange marches left. Other pieces can get there too, but only a MinuteMan wins - so protect yours and stop theirs!</p>
@@ -37,6 +41,7 @@ function pages(rules) {
             {bonus > 0 ? <> (Orange gets <strong>${bonus}</strong> extra for going second)</> : null}, and you earn {income} every time you end your turn
             {rules?.killBounty > 0 ? <>, plus <strong>${rules.killBounty}</strong> for every enemy piece you take</> : null}.
           </p>
+          {rules?.minerIncome ? <p>Each <strong>Miner</strong> you have{rules.minerIncomeHome ? ' on your half' : ''} digs up another <strong>${rules.minerIncome}</strong> of gold when you end your turn.</p> : null}
         </>
       ),
     },
@@ -83,7 +88,7 @@ function pages(rules) {
           <p>A barrier costs {barrier} and is two squares tall: the square you pick and the one above it. Barriers only go in the middle of the board, and can't touch another barrier, fire, or any piece.</p>
           <p>A piece that walks into a barrier destroys it, but is destroyed too - except a <strong>Carpenter</strong>, which smashes through and survives. Miners tunnel straight under barriers, unless an enemy Carpenter is standing right next to that barrier.</p>
           {rules?.barrierLimit ? <p>Each player can have at most <strong>{rules.barrierLimit} barrier squares</strong> on the board (repairs count).</p> : null}
-          <p><strong>Fire</strong> works like a barrier, except wizards walk right through it (putting it out), and miners can't tunnel through it.</p>
+          <p><strong>Fire</strong> works like a barrier, except wizards walk right through it (putting it out), and miners can't tunnel through it.{rules?.fireTurns ? <> It burns out by itself after <strong>{rules.fireTurns / 2} rounds</strong>.</> : null}</p>
         </>
       ),
     },
@@ -91,9 +96,9 @@ function pages(rules) {
       title: 'Abilities',
       body: (
         <>
-          <p><strong>Active</strong> abilities (Spread, Purify, Explosion!, Rise) <strong>cost money</strong> every time you use them, but don't use a move. You need a character of that type on the board that wasn't bought this turn.</p>
+          <p><strong>Active</strong> abilities ({activeAbilities.map((k) => ABILITY_NAMES[k]).join(', ')}) <strong>cost money</strong> every time you use them, but don't use a move. You need a character of that type on the board that wasn't bought this turn.</p>
           {abilityPrices && <p>Prices: {abilityPrices}.</p>}
-          <p><strong>Passive</strong> abilities (Shield, Burrow, Repair &amp; Reinforce) are always on.</p>
+          <p><strong>Passive</strong> abilities (Shield, Burrow{rules?.minerIncome ? ', Gold mine' : ''}, Repair &amp; Reinforce) are always on. See <strong>Characters</strong> for what each one does.</p>
           <p>Open the <strong>Abilities</strong> tab to use one. Squares you can target light up in aqua.</p>
         </>
       ),

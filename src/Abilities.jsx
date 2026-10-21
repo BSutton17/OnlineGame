@@ -9,7 +9,7 @@ export default function Abilities({ color, legal, costs, money, yourTurn, movesL
       <button type="button" className="change" onClick={onToggle}>
         Inventory
       </button>
-      {ABILITIES.map((ability) => {
+      {ABILITIES.filter((ability) => !ability.optional || costs[ability.key] !== undefined).map((ability) => {
         const price = ability.paid ? costs[ability.key] : null;
         const ready = yourTurn && abilityReady(ability.key, legal);
         const status = ready ? 'Ready' : price !== null && price > money ? `Need $${price}` : 'Not ready';
@@ -18,8 +18,8 @@ export default function Abilities({ color, legal, costs, money, yourTurn, movesL
         const Icon = UNITS[ability.unit].Icon;
         const pick = () => {
           if (!ready) return;
-          // Purify has no target, so it happens straight away.
-          if (ability.key === 'purify') onUse(legal.purify);
+          // With only one way to Purify, it happens straight away; otherwise pick the priest.
+          if (ability.key === 'purify' && legal.purify.length === 1) onUse(legal.purify[0]);
           else onSelect({ kind: ability.key });
         };
         return (
@@ -27,7 +27,7 @@ export default function Abilities({ color, legal, costs, money, yourTurn, movesL
             key={ability.key}
             type="button"
             className={classes}
-            draggable={ready && ability.key !== 'purify'}
+            draggable={ready && !(ability.key === 'purify' && legal.purify.length === 1)}
             aria-pressed={selected}
             aria-disabled={!ready}
             title={ability.hint}
