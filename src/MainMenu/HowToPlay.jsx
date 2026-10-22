@@ -113,6 +113,7 @@ function pages(rules) {
       body: (
         <>
           <ul>
+            <li>No one to play? <strong>Play Bots</strong> lets you play the computer (Easy to Impossible), or watch two bots play with a bar showing who is winning.</li>
             <li>Press <strong>Esc</strong> or tap an empty square to cancel a selection.</li>
             <li>Pieces you can still use have a white outline.</li>
             <li>On a phone, hold it sideways or upright - both work. Upright, your side is at the bottom.</li>
