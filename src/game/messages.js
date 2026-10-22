@@ -33,7 +33,7 @@ export function describeEvent(event, view) {
 export function winText(view) {
   const { game } = view;
   if (!game || !game.winner) return null;
-  if (game.winner === 'draw') return { title: 'Draw', detail: 'The turn limit was reached.' };
+  if (game.winner === 'draw') return { title: 'Draw', detail: game.winReason === 'roundLimit' ? "Time's up, and it's dead even." : 'The turn limit was reached.' };
   const youWon = game.winner === view.you;
   const loser = view.players[game.winner === 'blue' ? 'orange' : 'blue']?.name || 'Your opponent';
   const winner = view.players[game.winner]?.name || 'Your opponent';
@@ -42,6 +42,13 @@ export function winText(view) {
     reachedEnd: youWon ? `Your ${piece} reached the far side of the board!` : `${winner}'s ${piece} reached your side of the board.`,
     resigned: youWon ? `${loser} resigned.` : 'You resigned.',
     forfeit: youWon ? `${loser} left the game.` : 'You were away too long.',
+    roundLimit: (() => {
+      const k = game.stats?.kills;
+      const mine = k ? k[view.you] : null;
+      const theirs = k ? k[view.you === 'blue' ? 'orange' : 'blue'] : null;
+      const tally = k ? ` (${mine} to ${theirs})` : '';
+      return youWon ? `Time's up! You destroyed more enemy pieces${tally}.` : `Time's up! ${winner} destroyed more of your pieces${tally}.`;
+    })(),
   }[game.winReason];
   return { title: youWon ? 'Victory!' : 'Defeat', detail };
 }

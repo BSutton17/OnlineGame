@@ -192,7 +192,10 @@ export default function GameScreen() {
           Room {view.code}
         </button>
         <h1 className={`status status-${game.current}`}>{status}</h1>
-        <h1 className="moves">Moves Left: {yourTurn ? game.movesLeft : '—'}</h1>
+        <h1 className="moves">
+          Moves Left: {yourTurn ? game.movesLeft : '—'}
+          {game.config.roundLimit ? ` · Round ${Math.min(game.config.roundLimit, Math.ceil(game.turn / 2))}/${game.config.roundLimit}` : ''}
+        </h1>
         <div className="header-buttons">
           {view.status === 'playing' && (
             <button type="button" className="leave" onClick={() => window.confirm('Resign this game?') && resign()}>

@@ -36,6 +36,11 @@ function pages(rules) {
           ) : (
             <p>Get a <strong>MinuteMan</strong> all the way to the far side of the board. Blue marches right, Orange marches left. Other pieces can get there too, but only a MinuteMan wins - so protect yours and stop theirs!</p>
           )}
+          {rules?.roundLimit ? (
+            <p>
+              <strong>Time limit:</strong> if nobody has got across after <strong>{rules.roundLimit} rounds</strong>, the game ends and whoever destroyed <strong>more enemy pieces</strong> wins (if that's a tie, whoever has more pieces left).
+            </p>
+          ) : null}
           <p>
             Everyone starts with {start}
             {bonus > 0 ? <> (Orange gets <strong>${bonus}</strong> extra for going second)</> : null}, and you earn {income} every time you end your turn

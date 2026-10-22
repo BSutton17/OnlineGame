@@ -32,3 +32,12 @@ describe('winText', () => {
     expect(winText({ ...view, game: { winner: null } })).toBe(null);
   });
 });
+
+describe('winText at the round limit', () => {
+  const ended = (winner) => ({ ...view, game: { winner, winReason: 'roundLimit', stats: { kills: { blue: 9, orange: 7 } } } });
+  test('says who destroyed more pieces', () => {
+    expect(winText(ended('blue'))).toEqual({ title: 'Victory!', detail: "Time's up! You destroyed more enemy pieces (9 to 7)." });
+    expect(winText(ended('orange')).detail).toBe("Time's up! Ben destroyed more of your pieces (9 to 7).");
+    expect(winText(ended('draw')).detail).toBe("Time's up, and it's dead even.");
+  });
+});
