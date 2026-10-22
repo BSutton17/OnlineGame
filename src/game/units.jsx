@@ -78,7 +78,7 @@ export const FireIcon = AiFillFire;
 
 export const ABILITIES = [
   { key: 'spread', title: 'Archer', name: 'Spread', unit: 'A', paid: true, hint: 'Hit three squares in a column in front of an archer.' },
-  { key: 'purify', title: 'Priest', name: 'Purify', unit: 'P', paid: true, hint: 'Destroy every enemy necromancer and skeleton on your half.' },
+  { key: 'purify', title: 'Priest', name: 'Purify', unit: 'P', paid: true, hint: 'Pick a priest: destroy the enemy pieces it reaches.' },
   { key: 'explosion', title: 'Wizard', name: 'Explosion!', unit: 'W', paid: true, hint: 'Pick a wizard: ring it with fire.' },
   { key: 'rise', title: 'Necromancer', name: 'Rise', unit: 'N', paid: true, hint: 'Pick a necromancer: raise fallen allies as skeletons.' },
   { key: 'repair', title: 'Carpenter', name: 'Repair', unit: 'C', hint: 'Extend a barrier next to one of your carpenters. Costs a move.' },
@@ -101,7 +101,7 @@ export function abilityText(key, rules) {
   switch (key) {
     case 'P':
       if (!rules.purifyMode || rules.purifyMode === 'undead') return base;
-      return `Purify (costs money): pick a priest - every enemy piece touching it is destroyed${rules.purifySparesShield ? ' (except MinuteMen, whose shields protect them)' : ''}.${rules.purifySacrifice ? ' The priest gives its life to do it.' : ''}`;
+      return `Purify (costs money): pick a priest - every enemy piece ${rules.purifyMode === 'column' ? "in the priest's column (the whole line, top to bottom)" : 'touching it'} is destroyed${rules.purifySparesShield ? ' (except MinuteMen, whose shields protect them)' : ''}.${rules.purifySacrifice ? ' The priest gives its life to do it.' : ''}`;
     case 'M':
       if (!rules.minerIncome) return base;
       return `Gold mine (passive): each of your Miners${rules.minerIncomeHome ? ' on your half of the board' : ''} digs up $${rules.minerIncome} when you end your turn.${rules.winUnits && !rules.winUnits.includes('M') ? " Miners are diggers, not soldiers: they don't win by reaching the far side." : ''} Burrow: tunnels under barriers - but not fire, and not a barrier an enemy carpenter is touching.`;
