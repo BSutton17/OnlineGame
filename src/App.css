@@ -1239,3 +1239,101 @@ h1 {
 .layout-compact .round-sep {
   display: none;
 }
+
+/* ---------- watching two bots: the speed slider (bottom left) ------------ */
+
+.speed-control {
+  grid-area: speed;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  width: 100%;
+  max-width: 13rem;
+  min-width: 0;
+  justify-self: start;
+  align-self: end;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.9rem;
+}
+
+.speed-control label {
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.speed-control input {
+  width: 100%;
+  margin: 0;
+  accent-color: rgb(100, 149, 237);
+  cursor: pointer;
+}
+
+.speed-value {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-variant-numeric: tabular-nums;
+}
+
+.watching#Outer-Container {
+  grid-template-areas:
+    'header header header'
+    'blue   board  orange'
+    'speed  tray   tray';
+}
+
+.layout-compact.watching#Outer-Container {
+  grid-template-rows: auto auto 1fr auto auto;
+  grid-template-areas:
+    'header board tray'
+    'blue   board tray'
+    '.      board tray'
+    'orange board tray'
+    'speed  board tray';
+}
+
+.layout-compact .speed-control {
+  /* "Speed  Full speed" on one line, the slider under it (the left column is tight) */
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 0.3rem;
+  row-gap: 0.1rem;
+  font-size: 0.75rem;
+}
+
+.layout-compact .speed-control label {
+  grid-row: 1;
+  grid-column: 1;
+}
+
+.layout-compact .speed-control .speed-value {
+  grid-row: 1;
+  grid-column: 2;
+  justify-self: end;
+  font-size: 0.7rem;
+}
+
+.layout-compact .speed-control input {
+  grid-row: 2;
+  grid-column: 1 / -1;
+}
+
+.layout-portrait.watching#Outer-Container {
+  grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+  grid-template-areas:
+    'header header'
+    'blue   orange'
+    'board  board'
+    'tray   tray'
+    'speed  speed';
+}
+
+.layout-portrait .speed-control {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 20rem;
+}
+
+.layout-portrait .speed-control input {
+  flex: 1;
+}

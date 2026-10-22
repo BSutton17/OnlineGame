@@ -255,4 +255,31 @@ describe('bots', () => {
     expect(screen.queryByText('Resign')).toBe(null);
     expect(screen.getAllByText(/Hard Bot is thinking/).length).toBeGreaterThan(0);
   });
+
+  test('a watcher can slow the bots down with the speed slider (right = full speed)', () => {
+    vi.useFakeTimers();
+    try {
+      const { socket } = setup({ 'room:speed': { ok: true } });
+      const watchView = (ms) =>
+        makeView({ spectator: true, botGame: 'watch', legal: [], analysis: null, moveDelay: { ms, fastest: 700, slowest: 5000 },
+          players: { blue: { name: 'Hard Bot', connected: true, bot: true }, orange: { name: 'Easy Bot', connected: true, bot: true } } });
+      act(() => socket.serverSends('room:state', watchView(700)));
+      const slider = screen.getByLabelText('Speed');
+      expect(slider).toHaveValue('100');
+      expect(screen.getByText('Full speed')).toBeInTheDocument();
+      fireEvent.change(slider, { target: { value: '0' } });
+      expect(screen.getByText('5.0 s a move')).toBeInTheDocument();
+      act(() => vi.advanceTimersByTime(200));
+      expect(socket.sent).toContainEqual({ event: 'room:speed', payload: { delayMs: 5000 } });
+      expect(localStorage.getItem('overlord.watchDelay')).toBe('5000');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  test('players (not watchers) never see the speed slider', () => {
+    const { socket } = setup();
+    act(() => socket.serverSends('room:state', makeView({ botGame: 'solo' })));
+    expect(screen.queryByLabelText('Speed')).toBe(null);
+  });
 });

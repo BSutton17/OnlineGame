@@ -108,10 +108,12 @@ export function GameProvider({ children, socketFactory = createSocket }) {
   const act = useCallback((action) => request(socket, 'game:action', action), [socket]);
   const resign = useCallback(() => request(socket, 'game:resign'), [socket]);
   const rematch = useCallback(() => request(socket, 'game:rematch'), [socket]);
+  // Watching two bots: the pause between their moves, in ms.
+  const setMoveDelay = useCallback((delayMs) => request(socket, 'room:speed', { delayMs }), [socket]);
 
   const value = useMemo(
-    () => ({ connection, rules, view, notice, setNotice, resuming, join, playBots, leave, act, resign, rematch }),
-    [connection, rules, view, notice, resuming, join, playBots, leave, act, resign, rematch],
+    () => ({ connection, rules, view, notice, setNotice, resuming, join, playBots, leave, act, resign, rematch, setMoveDelay }),
+    [connection, rules, view, notice, resuming, join, playBots, leave, act, resign, rematch, setMoveDelay],
   );
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
 }

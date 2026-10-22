@@ -3,6 +3,7 @@ import Board from './Board';
 import Inventory from '../Inventory';
 import Abilities from '../Abilities';
 import AnalysisPanel from './AnalysisPanel';
+import SpeedControl from './SpeedControl';
 import { sideName } from '../game/units.jsx';
 import { useGameContext } from '../Context/GameContext';
 import { useLayout } from '../hooks/useLayout';
@@ -78,7 +79,7 @@ function CashPanel({ side, view }) {
 }
 
 export default function GameScreen() {
-  const { view, act, leave, resign, rematch, connection } = useGameContext();
+  const { view, act, leave, resign, rematch, connection, setMoveDelay } = useGameContext();
   const layout = useLayout();
   const { game, you } = view;
   const yourTurn = view.status === 'playing' && game.current === you;
@@ -199,7 +200,7 @@ export default function GameScreen() {
   const endTurn = () => send(legal.endTurn);
 
   return (
-    <div id="Outer-Container" className={`layout-${layout}${busy ? ' busy' : ''}`}>
+    <div id="Outer-Container" className={`layout-${layout}${busy ? ' busy' : ''}${view.spectator ? ' watching' : ''}`}>
       <header className="game-header">
         <button type="button" id="room" onClick={copyCode} title="Copy room code">
           Room {view.code}
@@ -262,6 +263,8 @@ export default function GameScreen() {
           />
         )}
       </div>
+
+      {view.spectator && view.moveDelay && <SpeedControl moveDelay={view.moveDelay} onChange={setMoveDelay} />}
 
       {banner && !result && <h1 className="turn banner">{banner.text}</h1>}
       <div className="toasts" aria-live="polite" hidden={Boolean(result)}>
