@@ -214,3 +214,45 @@ describe('game screen', () => {
     expect(within(document.body).getByText('Play Now')).toBeInTheDocument();
   });
 });
+
+describe('bots', () => {
+  test('Play Bots -> Play a Bot sends the difficulty and side', async () => {
+    const { socket } = setup({ 'room:bot': { ok: true, code: '0099', seat: 'blue', token: 't9' } });
+    fireEvent.change(screen.getByPlaceholderText('Name...'), { target: { value: 'Ann' } });
+    act(() => fireEvent.click(screen.getByText('Play Bots')));
+    fireEvent.change(screen.getByLabelText('Difficulty'), { target: { value: 'hard' } });
+    await act(async () => fireEvent.click(screen.getByText('Start')));
+    expect(socket.sent).toContainEqual({ event: 'room:bot', payload: { name: 'Ann', mode: 'solo', level: 'hard', side: 'blue' } });
+  });
+
+  test('Watch Bots sends both levels', async () => {
+    const { socket } = setup({ 'room:bot': { ok: true, code: '0099', seat: 'watch', token: 't9' } });
+    fireEvent.change(screen.getByPlaceholderText('Name...'), { target: { value: 'Ann' } });
+    act(() => fireEvent.click(screen.getByText('Play Bots')));
+    act(() => fireEvent.click(screen.getByText('Watch Bots')));
+    fireEvent.change(screen.getByLabelText('Blue bot'), { target: { value: 'easy' } });
+    fireEvent.change(screen.getByLabelText('Orange bot'), { target: { value: 'impossible' } });
+    await act(async () => fireEvent.click(screen.getByText('Start')));
+    expect(socket.sent).toContainEqual({ event: 'room:bot', payload: { name: 'Ann', mode: 'watch', blueLevel: 'easy', orangeLevel: 'impossible' } });
+  });
+
+  test('a watcher sees the eval bar and the top 3 moves instead of the shop', () => {
+    const { socket } = setup();
+    const analysis = {
+      side: 'blue', turn: 3, level: 'Hard', depth: 5, blueChance: 0.73, eval: 1.2, chosen: 'Buy Wizard at C5',
+      top: [
+        { text: 'Buy Wizard at C5', eval: 1.2, blueChance: 0.73 },
+        { text: 'Archer C5→D5', eval: 0.4, blueChance: 0.6 },
+        { text: 'Pass', eval: -0.3, blueChance: 0.42 },
+      ],
+    };
+    act(() => socket.serverSends('room:state', makeView({ spectator: true, botGame: 'watch', thinking: true, analysis, legal: [],
+      players: { blue: { name: 'Hard Bot', connected: true, bot: true }, orange: { name: 'Easy Bot', connected: true, bot: true } } })));
+    expect(screen.getByRole('meter')).toHaveAttribute('aria-valuenow', '73');
+    expect(screen.getByText('Buy Wizard at C5').closest('li')).toHaveClass('chosen');
+    expect(screen.getByText('Archer C5→D5')).toBeInTheDocument();
+    expect(screen.queryByText('Inventory')).toBe(null);
+    expect(screen.queryByText('Resign')).toBe(null);
+    expect(screen.getAllByText(/Hard Bot is thinking/).length).toBeGreaterThan(0);
+  });
+});

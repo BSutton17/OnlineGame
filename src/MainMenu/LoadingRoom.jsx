@@ -3,6 +3,7 @@ import { TbBow, TbSwords, TbCross, TbShovel } from 'react-icons/tb';
 import { PiMagicWandFill, PiHammerFill } from 'react-icons/pi';
 import { GiCrownedSkull, GiRaiseSkeleton } from 'react-icons/gi';
 import { useGameContext } from '../Context/GameContext';
+import BotMenu from './BotMenu';
 import './HTP.css';
 
 const NAME_KEY = 'overlord.name';
@@ -35,56 +36,76 @@ export function MenuBackground({ children }) {
 }
 
 export default function LoadingRoom({ onShowRules }) {
-  const { join, notice, setNotice, connection } = useGameContext();
+  const { join, playBots, notice, setNotice, connection } = useGameContext();
+  const [botMenu, setBotMenu] = useState(false);
   const [name, setName] = useState(rememberedName);
   const [room, setRoom] = useState(roomFromLink);
   const [joining, setJoining] = useState(false);
 
-  const submit = async (e) => {
-    e.preventDefault();
-    if (!name.trim()) return setNotice('Please enter a name');
-    if (room && room.length !== 4) return setNotice('Room codes are 4 digits');
-    setJoining(true);
+  const remember = () => {
     try {
       localStorage.setItem(NAME_KEY, name.trim());
     } catch {
       // not important
     }
+  };
+
+  const startBots = async (options) => {
+    if (!name.trim()) return setNotice('Please enter a name');
+    setJoining(true);
+    remember();
+    const result = await playBots(name, options);
+    setJoining(false);
+    if (!result.ok) setNotice(result.error);
+  };
+
+  const submit = async (e) => {
+    e.preventDefault();
+    if (botMenu) return;
+    if (!name.trim()) return setNotice('Please enter a name');
+    if (room && room.length !== 4) return setNotice('Room codes are 4 digits');
+    setJoining(true);
+    remember();
     const result = await join(name, room);
     setJoining(false);
     if (!result.ok) setNotice(result.error);
   };
 
+  const status = notice || { connected: 'Enter your friend’s 4-digit room, or leave it blank to start one.', connecting: 'Connecting to the server…', offline: 'Can’t reach the server - retrying…' }[connection];
   return (
     <MenuBackground>
       <form className="home-wrapper" onSubmit={submit}>
         <h1>Overlord</h1>
         <input type="text" placeholder="Name..." value={name} maxLength={16} autoComplete="nickname" onChange={(e) => setName(e.target.value)} />
-        <input
-          type="text"
-          inputMode="numeric"
-          placeholder="Room #"
-          value={room}
-          maxLength={4}
-          aria-label="4-digit room number"
-          onChange={(e) => setRoom(e.target.value.replace(/\D/g, '').slice(0, 4))}
-        />
-        <p className="menu-note" role="status">
-          {notice ||
-            {
-              connected: 'Enter your friend’s 4-digit room, or leave it blank to start one.',
-              connecting: 'Connecting to the server…',
-              offline: 'Can’t reach the server - retrying…',
-            }[connection]}
-        </p>
-        <div className="menu-buttons">
-          <button type="submit" className="infoButton" disabled={joining || connection !== 'connected'}>
-            {joining ? 'Joining…' : 'Play Now'}
-          </button>
-          <button type="button" className="infoButton" onClick={onShowRules}>
-            How To Play
-          </button>
-        </div>
+        {botMenu ? (
+          <BotMenu busy={joining || connection !== 'connected'} notice={notice} onStart={startBots} onBack={() => setBotMenu(false)} />
+        ) : (
+          <>
+            <input
+              type="text"
+              inputMode="numeric"
+              placeholder="Room #"
+              value={room}
+              maxLength={4}
+              aria-label="4-digit room number"
+              onChange={(e) => setRoom(e.target.value.replace(/\D/g, '').slice(0, 4))}
+            />
+            <p className="menu-note" role="status">
+              {status}
+            </p>
+            <div className="menu-buttons">
+              <button type="submit" className="infoButton" disabled={joining || connection !== 'connected'}>
+                {joining ? 'Joining…' : 'Play Now'}
+              </button>
+              <button type="button" className="infoButton" onClick={() => setBotMenu(true)}>
+                Play Bots
+              </button>
+              <button type="button" className="infoButton" onClick={onShowRules}>
+                How To Play
+              </button>
+            </div>
+          </>
+        )}
       </form>
     </MenuBackground>
   );

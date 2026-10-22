@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Board from './Board';
 import Inventory from '../Inventory';
 import Abilities from '../Abilities';
+import AnalysisPanel from './AnalysisPanel';
+import { sideName } from '../game/units.jsx';
 import { useGameContext } from '../Context/GameContext';
 import { useLayout } from '../hooks/useLayout';
 import { groupLegal, targetsFor, abilityReady, actionablePieces } from '../game/legal';
@@ -63,7 +65,7 @@ function CashPanel({ side, view }) {
     <div id={side === 'blue' ? 'moneyLeft' : 'moneyRight'} className={`cash-panel${active ? ' active' : ''}`}>
       <h1 className="cash-Title">
         {player?.name || '—'}
-        {view.you === side ? ' (You)' : ''}
+        {view.you === side && !view.spectator ? ' (You)' : ''}
       </h1>
       <h1 className="cash">${view.game.money[side]}</h1>
       {counts.pieceLimit ? (
@@ -103,8 +105,9 @@ export default function GameScreen() {
     const key = `${view.round}:${game.turn}`;
     if (lastTurn.current === key) return;
     lastTurn.current = key;
-    setBanner({ key, text: yourTurn ? 'Your Turn' : `${opponent?.name || 'Opponent'}'s Turn` });
-  }, [view.status, view.round, game.turn, yourTurn, opponent?.name]);
+    const text = view.spectator ? `${sideName(game.current)}'s Turn` : yourTurn ? 'Your Turn' : `${opponent?.name || 'Opponent'}'s Turn`;
+    setBanner({ key, text });
+  }, [view.status, view.round, view.spectator, game.turn, game.current, yourTurn, opponent?.name]);
   // Hide it after a moment. Keyed on the banner itself, so unrelated updates can't cancel the timer.
   useEffect(() => {
     if (!banner) return undefined;
@@ -175,14 +178,24 @@ export default function GameScreen() {
   const secondsLeft = opponent?.deadline ? Math.max(0, Math.ceil((opponent.deadline - now) / 1000)) : null;
 
   const onLeave = () => {
-    if (view.status === 'playing' && !window.confirm('Leaving now counts as a loss. Leave the game?')) return;
+    if (view.status === 'playing' && !view.spectator && !window.confirm('Leaving now counts as a loss. Leave the game?')) return;
     leave();
   };
   const copyCode = () => navigator.clipboard?.writeText(view.code).then(() => toast('Room code copied'), () => {});
 
   const color = `selector-${you}`;
   const result = winText(view);
-  const status = view.status === 'finished' ? 'Game Over' : yourTurn ? 'Your Turn' : `${opponent?.name || 'Opponent'}'s Turn`;
+  const thinker = view.players[game.current]?.name;
+  const status =
+    view.status === 'finished'
+      ? 'Game Over'
+      : view.spectator
+        ? `${sideName(game.current)}'s Turn${view.thinking ? ` - ${thinker} is thinking…` : ''}`
+        : yourTurn
+          ? 'Your Turn'
+          : view.thinking
+            ? `${thinker} is thinking…`
+            : `${opponent?.name || 'Opponent'}'s Turn`;
   const endTurn = () => send(legal.endTurn);
 
   return (
@@ -193,11 +206,15 @@ export default function GameScreen() {
         </button>
         <h1 className={`status status-${game.current}`}>{status}</h1>
         <h1 className="moves">
-          Moves Left: {yourTurn ? game.movesLeft : '—'}
-          {game.config.roundLimit ? ` · Round ${Math.min(game.config.roundLimit, Math.ceil(game.turn / 2))}/${game.config.roundLimit}` : ''}
+          Moves Left: {yourTurn || view.spectator ? game.movesLeft : '—'}
+          {game.config.roundLimit ? (
+            <span className="round-count">
+              <span className="round-sep"> · </span>Round {Math.min(game.config.roundLimit, Math.ceil(game.turn / 2))}/{game.config.roundLimit}
+            </span>
+          ) : null}
         </h1>
         <div className="header-buttons">
-          {view.status === 'playing' && (
+          {view.status === 'playing' && !view.spectator && (
             <button type="button" className="leave" onClick={() => window.confirm('Resign this game?') && resign()}>
               Resign
             </button>
@@ -213,7 +230,9 @@ export default function GameScreen() {
       <CashPanel side="orange" view={view} />
 
       <div className="tray-area">
-        {tab === 'inventory' ? (
+        {view.spectator ? (
+          <AnalysisPanel analysis={view.analysis} thinking={view.thinking} players={view.players} current={game.current} />
+        ) : tab === 'inventory' ? (
           <Inventory
             color={color}
             costs={game.config.costs}
@@ -266,8 +285,8 @@ export default function GameScreen() {
             <h1>{result.title}</h1>
             <p>{result.detail}</p>
             {opponent ? (
-              <button type="button" className="infoButton" disabled={view.rematch[you]} onClick={rematch}>
-                {view.rematch[you] ? 'Waiting for opponent…' : view.rematch[opponentSide] ? 'Accept Rematch' : 'Rematch'}
+              <button type="button" className="infoButton" disabled={!view.botGame && view.rematch[you]} onClick={rematch}>
+                {view.botGame ? 'Play Again' : view.rematch[you] ? 'Waiting for opponent…' : view.rematch[opponentSide] ? 'Accept Rematch' : 'Rematch'}
               </button>
             ) : (
               <p>Your opponent has left.</p>

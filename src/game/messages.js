@@ -14,12 +14,13 @@ const HOW = {
 const ABILITY = { spread: 'Spread', purify: 'Purify', explosion: 'Explosion!', rise: 'Rise', curse: 'Curse' };
 
 export function describeEvent(event, view) {
-  const owner = (side) => (side === view.you ? 'Your' : `${view.players[side]?.name || 'Opponent'}'s`);
-  const who = (side) => (side === view.you ? 'You' : view.players[side]?.name || 'Opponent');
+  const mine = (side) => side === view.you && !view.spectator;
+  const owner = (side) => (mine(side) ? 'Your' : `${view.players[side]?.name || 'Opponent'}'s`);
+  const who = (side) => (mine(side) ? 'You' : view.players[side]?.name || 'Opponent');
   switch (event.kind) {
     case 'killed': {
       const text = `${owner(event.owner)} ${UNITS[event.unit]?.name || 'piece'} ${HOW[event.how] || 'was destroyed'}`;
-      return event.bounty > 0 && event.by === view.you ? `${text} (+$${event.bounty})` : text;
+      return event.bounty > 0 && mine(event.by) ? `${text} (+$${event.bounty})` : text;
     }
     case 'ability':
       return `${who(event.side)} used ${ABILITY[event.ability]}`;
@@ -34,6 +35,17 @@ export function winText(view) {
   const { game } = view;
   if (!game || !game.winner) return null;
   if (game.winner === 'draw') return { title: 'Draw', detail: game.winReason === 'roundLimit' ? "Time's up, and it's dead even." : 'The turn limit was reached.' };
+  if (view.spectator) {
+    // watching two bots: say who won, not "Victory" or "Defeat"
+    const name = view.players[game.winner]?.name || 'A bot';
+    const piece = UNITS[game.winUnit]?.name || 'piece';
+    const k = game.stats?.kills;
+    const detail = {
+      reachedEnd: `${name}'s ${piece} reached the far side.`,
+      roundLimit: `Time's up: ${name} destroyed more pieces${k ? ` (${k[game.winner]} to ${k[game.winner === 'blue' ? 'orange' : 'blue']})` : ''}.`,
+    }[game.winReason] || '';
+    return { title: `${game.winner === 'blue' ? 'Blue' : 'Orange'} wins!`, detail };
+  }
   const youWon = game.winner === view.you;
   const loser = view.players[game.winner === 'blue' ? 'orange' : 'blue']?.name || 'Your opponent';
   const winner = view.players[game.winner]?.name || 'Your opponent';

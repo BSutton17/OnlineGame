@@ -1121,3 +1121,121 @@ h1 {
     transition: none !important;
   }
 }
+
+/* ---------- bot games: engine analysis (watching two bots) --------------- */
+
+.analysis {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  width: 100%;
+  max-width: 40rem;
+  min-width: 0;
+  color: white;
+  font-size: 0.95rem;
+}
+
+.eval-bar {
+  display: flex;
+  height: 1.6rem;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.eval-side {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: white;
+  transition: width 0.6s ease;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.eval-line {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.eval-line.thinking {
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+}
+
+.top-moves {
+  margin: 0;
+  padding-left: 1.4rem;
+}
+
+.top-moves li {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.top-moves li.chosen {
+  color: white;
+  font-weight: 700;
+}
+
+.move-eval {
+  display: inline-block;
+  min-width: 3.2rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.layout-compact .analysis {
+  width: 11rem;
+  font-size: 0.75rem;
+}
+
+.layout-compact .top-moves li {
+  white-space: normal;
+}
+
+/* the bot menu's pickers look like the menu's text boxes */
+.bot-picker {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 0.2rem 0;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.bot-picker select {
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  margin-top: 0.2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.bot-picker option {
+  color: black;
+}
+
+/* the bot menu's mode buttons: the chosen one is outlined */
+.infoButton[aria-pressed='true'] {
+  border-color: rgba(100, 149, 237, 0.8);
+  box-shadow:
+    0 4px 15px rgba(0, 0, 0, 0.4),
+    0 0 15px rgba(100, 149, 237, 0.35);
+}
+
+/* phones held sideways: the round count gets its own line */
+.layout-compact .round-count {
+  display: block;
+}
+
+.layout-compact .round-sep {
+  display: none;
+}

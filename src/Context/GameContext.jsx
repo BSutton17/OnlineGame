@@ -88,6 +88,17 @@ export function GameProvider({ children, socketFactory = createSocket }) {
     [socket],
   );
 
+  // Play a bot ({ mode: 'solo', level }) or watch two bots ({ mode: 'watch', blueLevel, orangeLevel }).
+  const playBots = useCallback(
+    async (name, options) => {
+      setNotice(null);
+      const result = await request(socket, 'room:bot', { name, ...options });
+      if (result.ok) saveSession({ token: result.token, code: result.code });
+      return result;
+    },
+    [socket],
+  );
+
   const leave = useCallback(async () => {
     await request(socket, 'room:leave');
     saveSession(null);
@@ -99,8 +110,8 @@ export function GameProvider({ children, socketFactory = createSocket }) {
   const rematch = useCallback(() => request(socket, 'game:rematch'), [socket]);
 
   const value = useMemo(
-    () => ({ connection, rules, view, notice, setNotice, resuming, join, leave, act, resign, rematch }),
-    [connection, rules, view, notice, resuming, join, leave, act, resign, rematch],
+    () => ({ connection, rules, view, notice, setNotice, resuming, join, playBots, leave, act, resign, rematch }),
+    [connection, rules, view, notice, resuming, join, playBots, leave, act, resign, rematch],
   );
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
 }

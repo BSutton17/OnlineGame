@@ -41,3 +41,11 @@ describe('winText at the round limit', () => {
     expect(winText(ended('draw')).detail).toBe("Time's up, and it's dead even.");
   });
 });
+
+describe('watching two bots', () => {
+  const watch = { you: 'blue', spectator: true, players: { blue: { name: 'Hard Bot' }, orange: { name: 'Easy Bot' } } };
+  test('names both sides instead of "you"', () => {
+    expect(describeEvent({ kind: 'killed', owner: 'blue', unit: 'A', how: 'captured' }, watch)).toBe("Hard Bot's Archer was captured");
+    expect(winText({ ...watch, game: { winner: 'orange', winReason: 'reachedEnd', winUnit: 'W' } })).toEqual({ title: 'Orange wins!', detail: "Easy Bot's Wizard reached the far side." });
+  });
+});
