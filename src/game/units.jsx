@@ -101,7 +101,7 @@ export function abilityText(key, rules) {
   switch (key) {
     case 'P':
       if (!rules.purifyMode || rules.purifyMode === 'undead') return base;
-      return `Purify (costs money): pick a priest - every enemy piece ${rules.purifyMode === 'column' ? "in the priest's column (the whole line, top to bottom)" : 'touching it'} is destroyed${rules.purifySparesShield ? ' (except MinuteMen, whose shields protect them)' : ''}.${rules.purifySacrifice ? ' The priest gives its life to do it.' : ''}`;
+      return `Purify (costs money): pick a priest - every enemy piece ${rules.purifyMode === 'column' ? "in the priest's column (the whole line, top to bottom)" : 'touching it'} is destroyed${rules.purifySparesShield ? ' (except MinuteMen, whose shields protect them)' : ''}.${rules.purifySacrifice ? ' The priest gives its life to do it.' : ''}${rules.purifyCostsMove ? ' Uses a move.' : ''}`;
     case 'M':
       if (!rules.minerIncome) return base;
       return `Gold mine (passive): each of your Miners${rules.minerIncomeHome ? ' on your half of the board' : ''} digs up $${rules.minerIncome} when you end your turn.${rules.winUnits && !rules.winUnits.includes('M') ? " Miners are diggers, not soldiers: they don't win by reaching the far side." : ''} Burrow: tunnels under barriers - but not fire, and not a barrier an enemy carpenter is touching.`;

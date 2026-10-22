@@ -71,7 +71,7 @@ function pages(rules) {
               You can have at most <strong>{rules.pieceLimit} pieces</strong> on the board at once{caps.length ? <>, and at most <strong>{caps.join(' and ')}</strong></> : null}.
             </p>
           ) : null}
-          <p>Abilities and skeleton steps <strong>don't use a move</strong>. When nothing is left to do, your turn ends by itself.</p>
+          <p>Abilities{rules?.purifyCostsMove ? ' (except Purify)' : ''} and skeleton steps <strong>don't use a move</strong>. When nothing is left to do, your turn ends by itself.</p>
         </>
       ),
     },
@@ -101,7 +101,7 @@ function pages(rules) {
       title: 'Abilities',
       body: (
         <>
-          <p><strong>Active</strong> abilities ({activeAbilities.map((k) => ABILITY_NAMES[k]).join(', ')}) <strong>cost money</strong> every time you use them, but don't use a move. You need a character of that type on the board that wasn't bought this turn.</p>
+          <p><strong>Active</strong> abilities ({activeAbilities.map((k) => ABILITY_NAMES[k]).join(', ')}) <strong>cost money</strong> every time you use them, but don't use a move{rules?.purifyCostsMove ? ' (Purify does: it uses one of your moves)' : ''}. You need a character of that type on the board that wasn't bought this turn.</p>
           {abilityPrices && <p>Prices: {abilityPrices}.</p>}
           <p><strong>Passive</strong> abilities (Shield, Burrow{rules?.minerIncome ? ', Gold mine' : ''}, Repair &amp; Reinforce) are always on. See <strong>Characters</strong> for what each one does.</p>
           <p>Open the <strong>Abilities</strong> tab to use one. Squares you can target light up in aqua.</p>
