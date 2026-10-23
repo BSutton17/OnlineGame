@@ -101,20 +101,21 @@ export function abilityText(key, rules) {
   switch (key) {
     case 'P':
       if (!rules.purifyMode || rules.purifyMode === 'undead') return base;
-      return `Purify (costs money): pick a priest - every enemy piece ${rules.purifyMode === 'column' ? "in the priest's column (the whole line, top to bottom)" : 'touching it'} is destroyed${rules.purifySparesShield ? ' (except MinuteMen, whose shields protect them)' : ''}.${rules.purifySacrifice ? ' The priest gives its life to do it.' : ''}${rules.purifyCostsMove ? ' Uses a move.' : ''}`;
+      return `Purify (costs money): pick a priest - every enemy piece ${rules.purifyMode === 'column' ? "in the priest's column (the whole line, top to bottom)" : 'touching it'} is destroyed${rules.purifySparesShield ? ' (except MinuteMen, whose shields protect them)' : ''}.${rules.purifySacrifice ? ' The priest gives its life to do it.' : ''}${rules.purifyCostsMove ? ' Uses a move.' : ''}${rules.purifyCooldown ? ` Afterwards that priest rests for ${rules.purifyCooldown} turn${rules.purifyCooldown === 1 ? '' : 's'} before it can Purify again.` : ''}`;
     case 'M':
       if (!rules.minerIncome) return base;
-      return `Gold mine (passive): each of your Miners${rules.minerIncomeHome ? ' on your half of the board' : ''} digs up $${rules.minerIncome} when you end your turn.${rules.winUnits && !rules.winUnits.includes('M') ? " Miners are diggers, not soldiers: they don't win by reaching the far side." : ''} Burrow: tunnels under barriers - but not fire, and not a barrier an enemy carpenter is touching.`;
+      return `Gold mine (passive): each of your Miners${rules.minerIncomeHome ? ' on your half of the board' : ''} digs up $${rules.minerIncome} when you end your turn.${rules.minerRaid ? ` Raid: a Miner on the enemy's half steals $${rules.minerRaid} of their money instead.` : ''}${rules.winUnits && !rules.winUnits.includes('M') ? " Miners are diggers, not soldiers: they don't win by reaching the far side." : ''} Burrow: tunnels under barriers${rules.tunnelPieces ? ' and pieces' : ''} - but not fire, and not a barrier an enemy carpenter is touching.${rules.minerUnderground ? " Underground: Explosion, Purify, Spread and arrows can't touch a Miner - only close combat can take one." : ''}`;
     case 'N': {
       const parts = [];
-      if (rules.riseRevives) parts.push(`Rise (costs money): up to ${rules.riseMax} of your fallen pieces come back as themselves (most recent first) in front of the necromancer.`);
+      if (rules.riseRevives) parts.push(`Rise (costs money): ${rules.riseMax === 1 ? 'your most recently fallen piece comes' : `up to ${rules.riseMax} of your fallen pieces come`} back as ${rules.riseMax === 1 ? 'itself' : 'themselves'}${rules.riseMax === 1 ? '' : ' (most recent first)'} in front of the necromancer${rules.riseNoWizards ? ' (Wizards stay dead)' : ''}.`);
       else parts.push(base);
-      if (rules.necroCurse) parts.push(`Curse (costs money): an enemy piece within ${rules.curseRange} squares can't move or use an ability on its next turn. Each necromancer can curse once a turn.`);
+      if (rules.necroCurse) parts.push(`Curse (costs money): an enemy piece within ${rules.curseRange} squares can't move or use an ability on its next ${rules.curseTurns > 1 ? `${rules.curseTurns} turns` : 'turn'}. Each necromancer can curse once a turn.`);
+      if (rules.winUnits && !rules.winUnits.includes('N')) parts.push("Necromancers are summoners, not soldiers: they don't win by reaching the far side.");
       return parts.join(' ');
     }
     case 'C':
       if (!rules.carpenterBuilds) return base;
-      return `${base} Fortify (costs money${rules.fortifyFree ? ", doesn't use a move" : ', uses a move'}): build a 1-square barrier on an empty square next to the carpenter - it may touch pieces.`;
+      return `${base} Fortify (costs money${rules.fortifyFree ? ", doesn't use a move" : ', uses a move'}): build a 1-square barrier on an empty square next to the carpenter - it may touch pieces.${rules.carpenterWalls ? ` Each carpenter you have lets you build ${rules.carpenterWalls} more barrier squares.` : ''}${rules.carpenterWard ? ` Ward (passive): your pieces touching a carpenter can't be destroyed by ${rules.carpenterWard >= 2 ? 'Purify, Explosion or Spread' : 'Purify'}.` : ''}`;
     case 'W':
       return base + fire;
     default:
