@@ -20,6 +20,8 @@ function pages(rules) {
   const twice = Object.entries(rules?.unitMoveLimits ?? { MM: 2 }).filter(([, n]) => n === 2).map(([u]) => pluralName(u));
   const caps = Object.entries(rules?.unitCaps ?? {}).map(([u, n]) => `${n} ${pluralName(u)}`);
   const ABILITY_NAMES = { spread: 'Spread', purify: 'Purify', explosion: 'Explosion!', rise: 'Rise', curse: 'Curse', fortify: 'Fortify' };
+  // abilities that use one of your moves under the server's rules
+  const moveAbilities = [rules?.purifyCostsMove && 'Purify', rules?.riseCostsMove && 'Rise'].filter(Boolean);
   const activeAbilities = Object.keys(ABILITY_NAMES).filter((k) => !rules || rules.costs[k] !== undefined);
   const abilityPrices = rules ? activeAbilities.map((k) => `${ABILITY_NAMES[k]} ${rules.costs[k]}`).join(', ') : null;
   return [
@@ -71,7 +73,7 @@ function pages(rules) {
               You can have at most <strong>{rules.pieceLimit} pieces</strong> on the board at once{caps.length ? <>, and at most <strong>{caps.join(' and ')}</strong></> : null}.
             </p>
           ) : null}
-          <p>Abilities{rules?.purifyCostsMove ? ' (except Purify)' : ''} and skeleton steps <strong>don't use a move</strong>. When nothing is left to do, your turn ends by itself.</p>
+          <p>Abilities{moveAbilities.length ? ` (except ${moveAbilities.join(' and ')})` : ''} and skeleton steps <strong>don't use a move</strong>. When nothing is left to do, your turn ends by itself.</p>
         </>
       ),
     },
@@ -101,7 +103,7 @@ function pages(rules) {
       title: 'Abilities',
       body: (
         <>
-          <p><strong>Active</strong> abilities ({activeAbilities.map((k) => ABILITY_NAMES[k]).join(', ')}) <strong>cost money</strong> every time you use them, but don't use a move{rules?.purifyCostsMove ? ' (Purify does: it uses one of your moves)' : ''}. You need a character of that type on the board that wasn't bought this turn.</p>
+          <p><strong>Active</strong> abilities ({activeAbilities.map((k) => ABILITY_NAMES[k]).join(', ')}) <strong>cost money</strong> every time you use them, but don't use a move{moveAbilities.length ? ` (${moveAbilities.join(' and ')} ${moveAbilities.length > 1 ? 'do' : 'does'}: ${moveAbilities.length > 1 ? 'each uses' : 'it uses'} one of your moves)` : ''}. You need a character of that type on the board that wasn't bought this turn.</p>
           {abilityPrices && <p>Prices: {abilityPrices}.</p>}
           <p><strong>Passive</strong> abilities (Shield, Burrow{rules?.minerIncome ? ', Gold mine' : ''}, Repair &amp; Reinforce) are always on. See <strong>Characters</strong> for what each one does.</p>
           <p>Open the <strong>Abilities</strong> tab to use one. Squares you can target light up in aqua.</p>
