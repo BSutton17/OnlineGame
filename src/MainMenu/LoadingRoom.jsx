@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { TbBow, TbSwords, TbCross, TbShovel } from 'react-icons/tb';
-import { PiMagicWandFill, PiHammerFill } from 'react-icons/pi';
-import { GiCrownedSkull, GiRaiseSkeleton } from 'react-icons/gi';
+import { TbBow, TbSwords, TbCross } from 'react-icons/tb';
+import { PiMagicWandFill } from 'react-icons/pi';
+import { GiCrownedSkull, GiRaiseSkeleton, GiGoblinHead, GiMagicShield } from 'react-icons/gi';
 import { useGameContext } from '../Context/GameContext';
 import BotMenu from './BotMenu';
 import './HTP.css';
@@ -25,9 +25,9 @@ export function MenuBackground({ children }) {
       <div className="icons" id="TbBow"><TbBow size="40vmin" /></div>
       <div className="icons" id="TbSwords"><TbSwords size="30vmin" /></div>
       <div className="icons" id="TbCross"><TbCross size="21vmin" /></div>
-      <div className="icons" id="TbShovel"><TbShovel size="14vmin" /></div>
+      <div className="icons" id="GiGoblinHead"><GiGoblinHead size="14vmin" /></div>
       <div className="icons" id="PiMagicWandFill"><PiMagicWandFill size="21vmin" /></div>
-      <div className="icons" id="PiHammerFill"><PiHammerFill size="12vmin" /></div>
+      <div className="icons" id="GiMagicShield"><GiMagicShield size="12vmin" /></div>
       <div className="icons" id="GiCrownedSkull"><GiCrownedSkull size="32vmin" /></div>
       <div className="icons" id="GiRaiseSkeleton"><GiRaiseSkeleton size="10vmin" /></div>
       {children}

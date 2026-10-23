@@ -1,9 +1,9 @@
 // Display-only information about each piece. Rules and prices live on the
 // server; this file only says what things are called and how they look.
 import { AiFillFire } from 'react-icons/ai';
-import { TbBow, TbSwords, TbCross, TbShovel } from 'react-icons/tb';
-import { PiMagicWandFill, PiHammerFill } from 'react-icons/pi';
-import { GiCrownedSkull, GiRaiseSkeleton } from 'react-icons/gi';
+import { TbBow, TbSwords, TbCross } from 'react-icons/tb';
+import { PiMagicWandFill } from 'react-icons/pi';
+import { GiCrownedSkull, GiRaiseSkeleton, GiGoblinHead, GiMagicShield } from 'react-icons/gi';
 
 export const UNITS = {
   MM: {
@@ -31,12 +31,12 @@ export const UNITS = {
     ability: 'Purify (costs money): every enemy Necromancer and Skeleton on your half of the board is destroyed.',
   },
   M: {
-    name: 'Miner',
-    Icon: TbShovel,
-    blurb: 'Resilient diggers. Not even barriers can stand in their way... but fire might.',
+    name: 'Goblin',
+    Icon: GiGoblinHead,
+    blurb: "Sneaky diggers who love gold. They hoard it at home, steal it from the enemy, and hide in their tunnels where no spell or arrow can reach them.",
     range: 'Melee',
     moves: '1 or 2 squares straight ahead (3 when tunnelling under a barrier), and can move twice a turn, or one step back.',
-    ability: "Burrow (passive): tunnels under barriers - but not fire, and not a barrier an enemy carpenter is touching.",
+    ability: "Burrow (passive): tunnels under barriers - but not fire, and not a barrier an enemy warden is touching.",
   },
   W: {
     name: 'Wizard',
@@ -55,12 +55,12 @@ export const UNITS = {
     ability: 'Rise (costs money): up to 3 fallen allies return as Skeletons in front of the necromancer.',
   },
   C: {
-    name: 'Carpenter',
-    Icon: PiHammerFill,
-    blurb: 'Everyone needs a handyman on site. Carpenters fix barriers and are great defenders.',
+    name: 'Warden',
+    Icon: GiMagicShield,
+    blurb: 'Keepers of the walls. Wardens build and mend barriers, and shield the pieces around them from magic and blasts.',
     range: 'Melee',
     moves: 'One step forward or back, or up to 2 squares up or down.',
-    ability: "Repair, Reinforce & Smash (passive): extends a barrier it touches by one square for one move, stops enemy miners tunnelling under a barrier it's touching, and walks straight through barriers, knocking them down.",
+    ability: "Repair, Reinforce & Smash (passive): extends a barrier it touches by one square for one move, stops enemy goblins tunnelling under a barrier it's touching, and walks straight through barriers, knocking them down.",
   },
   S: {
     name: 'Skeleton',
@@ -81,9 +81,9 @@ export const ABILITIES = [
   { key: 'purify', title: 'Priest', name: 'Purify', unit: 'P', paid: true, hint: 'Pick a priest: destroy the enemy pieces it reaches.' },
   { key: 'explosion', title: 'Wizard', name: 'Explosion!', unit: 'W', paid: true, hint: 'Pick a wizard: ring it with fire.' },
   { key: 'rise', title: 'Necromancer', name: 'Rise', unit: 'N', paid: true, hint: 'Pick a necromancer: raise fallen allies as skeletons.' },
-  { key: 'repair', title: 'Carpenter', name: 'Repair', unit: 'C', hint: 'Extend a barrier next to one of your carpenters. Costs a move.' },
+  { key: 'repair', title: 'Warden', name: 'Repair', unit: 'C', hint: 'Extend a barrier next to one of your wardens. Costs a move.' },
   // Shown only when the server's rules have them (they then appear in the price list).
-  { key: 'fortify', title: 'Carpenter', name: 'Fortify', unit: 'C', paid: true, optional: true, hint: 'Build a 1-square barrier next to one of your carpenters.' },
+  { key: 'fortify', title: 'Warden', name: 'Fortify', unit: 'C', paid: true, optional: true, hint: 'Build a 1-square barrier next to one of your wardens.' },
   { key: 'curse', title: 'Necromancer', name: 'Curse', unit: 'N', paid: true, optional: true, hint: 'Pick an enemy piece near a necromancer: it cannot move next turn.' },
 ];
 
@@ -104,7 +104,7 @@ export function abilityText(key, rules) {
       return `Purify (costs money): pick a priest - every enemy piece ${rules.purifyMode === 'column' ? "in the priest's column (the whole line, top to bottom)" : 'touching it'} is destroyed${rules.purifySparesShield ? ' (except MinuteMen, whose shields protect them)' : ''}.${rules.purifySacrifice ? ' The priest gives its life to do it.' : ''}${rules.purifyCostsMove ? ' Uses a move.' : ''}${rules.purifyCooldown ? ` Afterwards that priest rests for ${rules.purifyCooldown} turn${rules.purifyCooldown === 1 ? '' : 's'} before it can Purify again.` : ''}`;
     case 'M':
       if (!rules.minerIncome) return base;
-      return `Gold mine (passive): each of your Miners${rules.minerIncomeHome ? ' on your half of the board' : ''} digs up $${rules.minerIncome} when you end your turn.${rules.minerRaid ? ` Raid: a Miner on the enemy's half steals $${rules.minerRaid} of their money instead.` : ''}${rules.winUnits && !rules.winUnits.includes('M') ? " Miners are diggers, not soldiers: they don't win by reaching the far side." : ''} Burrow: tunnels under barriers${rules.tunnelPieces ? ' and pieces' : ''} - but not fire, and not a barrier an enemy carpenter is touching.${rules.minerUnderground ? " Underground: Explosion, Purify, Spread and arrows can't touch a Miner - only close combat can take one." : ''}`;
+      return `Gold mine (passive): each of your Goblins${rules.minerIncomeHome ? ' on your half of the board' : ''} digs up $${rules.minerIncome} when you end your turn.${rules.minerRaid ? ` Raid: a Goblin on the enemy's half steals $${rules.minerRaid} of their money instead.` : ''}${rules.winUnits && !rules.winUnits.includes('M') ? " Goblins are thieves, not soldiers: they don't win by reaching the far side." : ''} Burrow: tunnels under barriers${rules.tunnelPieces ? ' and pieces' : ''} - but not fire, and not a barrier an enemy warden is touching.${rules.minerUnderground ? " Underground: Explosion, Purify, Spread and arrows can't touch a Goblin - only close combat can take one." : ''}`;
     case 'N': {
       const parts = [];
       if (rules.riseRevives) parts.push(`Rise (costs money): ${rules.riseMax === 1 ? 'your most recently fallen piece comes' : `up to ${rules.riseMax} of your fallen pieces come`} back as ${rules.riseMax === 1 ? 'itself' : 'themselves'}${rules.riseMax === 1 ? '' : ' (most recent first)'} in front of the necromancer${rules.riseNoWizards ? ' (Wizards stay dead)' : ''}.`);
@@ -115,7 +115,7 @@ export function abilityText(key, rules) {
     }
     case 'C':
       if (!rules.carpenterBuilds) return base;
-      return `${base} Fortify (costs money${rules.fortifyFree ? ", doesn't use a move" : ', uses a move'}): build a 1-square barrier on an empty square next to the carpenter - it may touch pieces.${rules.carpenterWalls ? ` Each carpenter you have lets you build ${rules.carpenterWalls} more barrier squares.` : ''}${rules.carpenterWard ? ` Ward (passive): your pieces touching a carpenter can't be destroyed by ${rules.carpenterWard >= 2 ? 'Purify, Explosion or Spread' : 'Purify'}.` : ''}`;
+      return `${base} Fortify (costs money${rules.fortifyFree ? ", doesn't use a move" : ', uses a move'}): build a 1-square barrier on an empty square next to the warden - it may touch pieces.${rules.carpenterWalls ? ` Each warden you have lets you build ${rules.carpenterWalls} more barrier squares.` : ''}${rules.carpenterWard ? ` Ward (passive): your pieces touching a warden can't be destroyed by ${rules.carpenterWard >= 2 ? 'Purify, Explosion or Spread' : 'Purify'}.` : ''}`;
     case 'W':
       return base + fire;
     default:

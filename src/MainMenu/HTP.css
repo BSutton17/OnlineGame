@@ -171,9 +171,9 @@
 #TbBow { left: 65%; top: 40%; transform: rotate(23deg); }
 #TbSwords { left: 10%; top: 20%; }
 #TbCross { left: 65%; top: 10%; transform: rotate(330deg); }
-#TbShovel { left: 40%; top: 70%; transform: rotate(95deg); }
+#GiGoblinHead { left: 40%; top: 70%; transform: rotate(95deg); }
 #PiMagicWandFill { left: 10%; top: 70%; transform: rotate(258deg); }
-#PiHammerFill { left: 85%; top: 25%; transform: rotate(-12deg); }
+#GiMagicShield { left: 85%; top: 25%; transform: rotate(-12deg); }
 #GiCrownedSkull { left: 35%; top: 1%; }
 #GiRaiseSkeleton { left: 50%; top: 65%; transform: rotate(358deg); }
 

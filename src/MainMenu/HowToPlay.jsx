@@ -14,9 +14,9 @@ function pages(rules) {
   const perPiece = rules?.pieceMoveLimit ?? 1;
   const bonus = rules?.secondPlayerBonus ?? 0;
   const anyPieceWins = !rules || !rules.winUnits;
-  // e.g. every piece except Miners scores (Miners dig gold instead)
+  // e.g. every piece except Goblins scores (Goblins dig and steal gold instead)
   const nonScorers = rules?.winUnits && rules.winUnits.includes('MM') ? ['A', 'P', 'M', 'W', 'N', 'C'].filter((u) => !rules.winUnits.includes(u)) : [];
-  // Pieces allowed to move twice a turn, e.g. "MinuteMen and Miners".
+  // Pieces allowed to move twice a turn, e.g. "MinuteMen and Goblins".
   const twice = Object.entries(rules?.unitMoveLimits ?? { MM: 2 }).filter(([, n]) => n === 2).map(([u]) => pluralName(u));
   const caps = Object.entries(rules?.unitCaps ?? {}).map(([u, n]) => `${n} ${pluralName(u)}`);
   const ABILITY_NAMES = { spread: 'Spread', purify: 'Purify', explosion: 'Explosion!', rise: 'Rise', curse: 'Curse', fortify: 'Fortify' };
@@ -46,7 +46,7 @@ function pages(rules) {
             {bonus > 0 ? <> (Orange gets <strong>${bonus}</strong> extra for going second)</> : null}, and you earn {income} every time you end your turn
             {rules?.killBounty > 0 ? <>, plus <strong>${rules.killBounty}</strong> for every enemy piece you take</> : null}.
           </p>
-          {rules?.minerIncome ? <p>Each <strong>Miner</strong> you have{rules.minerIncomeHome ? ' on your half' : ''} digs up another <strong>${rules.minerIncome}</strong> of gold when you end your turn.</p> : null}
+          {rules?.minerIncome ? <p>Each <strong>Goblin</strong> you have{rules.minerIncomeHome ? ' on your half' : ''} digs up another <strong>${rules.minerIncome}</strong> of gold when you end your turn.</p> : null}
         </>
       ),
     },
@@ -91,9 +91,9 @@ function pages(rules) {
       body: (
         <>
           <p>A barrier costs {barrier} and is two squares tall: the square you pick and the one above it. Barriers only go in the middle of the board, and can't touch another barrier, fire, or any piece.</p>
-          <p>A piece that walks into a barrier destroys it, but is destroyed too - except a <strong>Carpenter</strong>, which smashes through and survives. Miners tunnel straight under barriers, unless an enemy Carpenter is standing right next to that barrier.</p>
+          <p>A piece that walks into a barrier destroys it, but is destroyed too - except a <strong>Warden</strong>, which smashes through and survives. Goblins tunnel straight under barriers, unless an enemy Warden is standing right next to that barrier.</p>
           {rules?.barrierLimit ? <p>Each player can have at most <strong>{rules.barrierLimit} barrier squares</strong> on the board (repairs count).</p> : null}
-          <p><strong>Fire</strong> works like a barrier, except wizards walk right through it (putting it out), and miners can't tunnel through it.{rules?.fireTurns ? <> It burns out by itself after <strong>{rules.fireTurns / 2} rounds</strong>.</> : null}</p>
+          <p><strong>Fire</strong> works like a barrier, except wizards walk right through it (putting it out), and goblins can't tunnel through it.{rules?.fireTurns ? <> It burns out by itself after <strong>{rules.fireTurns / 2} rounds</strong>.</> : null}</p>
         </>
       ),
     },
